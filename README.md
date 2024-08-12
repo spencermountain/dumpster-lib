@@ -1,2 +1,2 @@
-# dumpster-lib
-shared utilities for wikipedia dump processing libraries
+# dumpster-duck
+process wikipedia dumps into duckdb

@@ -1,0 +1,38 @@
+{
+  "name": "dumpster-lib",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "main": "./src/index.js",
+  "type": "module",
+  "author": "Spencer Kelly <spencermountain@gmail.com> (http://spencermounta.in)",
+  "scripts": {
+    "watch": "node --watch-path=./src scratch.js",
+    "test": "node --test-reporter dot --test tests/ ",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spencermountain/dumpster-dip.git"
+  },
+  "bugs": {
+    "url": "https://github.com/spencermountain/dumpster-dip/issues"
+  },
+  "homepage": "https://github.com/spencermountain/dumpster-dip#readme",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "jsonfn": "^0.31.0",
+    "prompts": "^2.4.2",
+    "shelljs": "^0.8.5",
+    "spacetime": "^7.6.1",
+    "yargs": "^17.7.2"
+  },
+  "license": "MIT"
+}
