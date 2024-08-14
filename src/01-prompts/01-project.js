@@ -1,5 +1,5 @@
 import prompts from 'prompts'
-
+import { onCancel } from './_lib.js'
 
 const getProject = async function () {
 
@@ -13,7 +13,7 @@ const getProject = async function () {
       { title: 'Wikivoyage', value: 'wikivoyage' },
       { title: 'Custom Wiki', value: 'custom', description: 'Process a 3rd-party wiki dump', }
     ],
-  });
+  }, { onCancel });
 
   return response;
 }

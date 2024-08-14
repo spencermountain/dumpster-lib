@@ -1,16 +1,15 @@
 import prompts from 'prompts'
+import { onCancel } from './_lib.js'
 
-const getLanguage = async function () {
+const getPageviews = async function () {
 
   const response = await prompts({
-    type: 'text',
-    name: 'lang',
-    message: 'Which language?',
-    initial: `en`,
-    validate: lang => !lang || lang.length < 2 ? `Provide a 2-letter language code` : true
-  });
+    type: 'confirm',
+    name: 'pageviews',
+    message: 'Would you like to download and include Pageviews data?',
+  }, { onCancel });
 
   return response;
 }
 
-export default getLanguage
+export default getPageviews
