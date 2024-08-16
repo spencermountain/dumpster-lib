@@ -10,18 +10,17 @@ const getReady = async function (opts) {
 
   //download pageviews data?
   if (opts.pageviews) {
-    console.log(`Downloading wikipedia pageviews dataset`)
     await getPageviews(dir)
   }
 
   // download a dump, or re-use existing one
-  if (fs.existsSync(file) === false) {
+  if (fs.existsSync(file) === true) {
     console.log(`Unzipped file already exists, using '${file}'`)
     return
   }
 
   console.log(`Downloading ${opts.lang} ${opts.project} dump`)
-  await getDump(opts.lang, dir)
+  await getDump(opts.lang, opts.project, dir)
 }
 
 export default getReady

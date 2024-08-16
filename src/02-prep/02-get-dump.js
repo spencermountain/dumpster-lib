@@ -2,31 +2,39 @@
 import sh from 'shelljs'
 import path from 'node:path'
 import wget from './_wget.js'
-import { elapsed } from './_fns.js'
+import { getFileSize, elapsed } from './_fns.js'
 
-const download = async function (lang, dir) {
-  let file = path.join(dir, `./${lang}wiki-latest-pages-articles.xml.bz2`)
+const download = async function (file, dir) {
+  if (fs.existsSync(file + '.bz2')) {
+    console.log(`  Wikimedia dump file exists, skipping download.`)
+    return
+  }
   console.log('\n\nDownloading dump:')
-  let url = `https://dumps.wikimedia.org/${lang}wiki/latest/${lang}wiki-latest-pages-articles.xml.bz2`
-  sh.cd(dir) //.exec(cmd)
+  let url = `https://dumps.wikimedia.org/${proj}/latest/${proj}-latest-pages-articles.xml.bz2`
+  await getFileSize(url)
+
   let start = Date.now()
   await wget(url, dir)
   elapsed(start)
-
-  console.log('\n\nUnzipping file:')
-  start = Date.now()
-  sh.cd(dir).exec(`bzip2 -d ${file}`)
-  elapsed(start)
-  console.log('✅')
 }
-// const download = function (lang, dir) {
-//   let file = path.join(dir, `./${lang}wiki-latest-pages-articles.xml.bz2`)
-//   console.log('\n\ndownloading:')
-//   let cmd = `wget --no-clobber https://dumps.wikimedia.org/${lang}wiki/latest/${lang}wiki-latest-pages-articles.xml.bz2 -P ${dir}`
-//   sh.cd(dir).exec(cmd)
 
-//   console.log('\n\nunzipping:')
-//   sh.cd(dir).exec(`bzip2 -d ${file}`)
-//   console.log('\n\nprocessing:')
-// }
-export default download
+const unzipDump = async function (file) {
+  console.log('Decompressing file:')
+  let start = Date.now()
+  await decompress(file)
+  elapsed(start)
+  console.log('Wikimedia dump decomression done');
+}
+
+const getDump = async function (lang, project, dir) {
+  // Filenames are 'enwiki', 'frwiktionary' etc,
+  let proj = project === 'wikipedia' ? `${lang}wiki` : `${lang}${project}`
+  let file = path.join(dir, `./${proj}-latest-pages-articles.xml`)
+  if (fs.existsSync(file)) {
+    console.log(` Wikimedia dump file exists, skipping download.\n   '${file}'`)
+    return
+  }
+  await download(lang, project, dir)
+  await unzipDump(file + '.bz2')
+}
+export default getDump
