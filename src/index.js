@@ -1,5 +1,5 @@
 import doPrompts from './01-prompts/index.js'
-import getReady from './02-download/index.js'
+import getReady from './02-prep/index.js'
 import run from './03-run/index.js'
 
 
