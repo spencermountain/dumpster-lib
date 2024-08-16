@@ -32,7 +32,8 @@ const getPageViews = async function (dir) {
 
   console.log('decompressing file:')
   let start = Date.now()
-  await decompress(file)
+  let out = await decompress(file, './')
+  console.log(out)
   elapsed(start)
   console.log('Pageviews decomression done');
 }

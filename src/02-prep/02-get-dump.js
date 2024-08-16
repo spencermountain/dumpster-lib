@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import sh from 'shelljs'
+import fs from 'node:fs'
 import path from 'node:path'
 import wget from './_wget.js'
 import { getFileSize, elapsed } from './_fns.js'
@@ -21,7 +21,7 @@ const download = async function (file, dir) {
 const unzipDump = async function (file) {
   console.log('Decompressing file:')
   let start = Date.now()
-  await decompress(file)
+  await decompress(file, '.')
   elapsed(start)
   console.log('Wikimedia dump decomression done');
 }
