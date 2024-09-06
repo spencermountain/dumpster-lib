@@ -5,7 +5,7 @@ const getParser = async function () {
 
   const response = await prompts({
     type: 'select',
-    name: 'parser',
+    name: 'format',
     message: 'What data would you like, for each page?',
     choices: [
       { title: 'JSON', value: 'json', description: 'pages parsed into data' },

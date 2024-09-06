@@ -17,8 +17,8 @@ const toParams = function (name, opts) {
   if (opts.pageviews) {
     cmd += ` --pageviews`
   }
-  if (opts.parser === 'json' || opts.parser === 'text') {
-    cmd += ` --format=${opts.parser}`
+  if (opts.format === 'json' || opts.format === 'text') {
+    cmd += ` --format=${opts.format}`
   }
   return cmd
 }

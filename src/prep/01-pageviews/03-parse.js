@@ -1,5 +1,6 @@
 import sh from 'shelljs'
 const tsvOut = './pageviews.tsv'
+import fs from 'node:fs'
 
 const parsePageviews = function (file, lang, project) {
   //filter-it down to our project only

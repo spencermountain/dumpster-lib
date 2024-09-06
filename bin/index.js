@@ -31,7 +31,7 @@ const doPrompts = async function (name = 'dumpster') {
     let r = await getPageviews()
     Object.assign(res, r)
   }
-  if (res.parser === undefined) {
+  if (res.format === undefined) {
     let r = await getParser()
     Object.assign(res, r)
   }
