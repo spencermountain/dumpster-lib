@@ -1,10 +1,10 @@
-import doPrompts from './01-prompts/index.js'
-import getReady from './02-prep/index.js'
-import run from './03-run/index.js'
+import getPrompts from '../bin/index.js'
+import prepare from './prep/index.js'
+import run from './run/index.js'
 
 
-let opts = await doPrompts()
+let opts = await getPrompts()
 
-await getReady(opts)
+await prepare(opts)
 
-await run(opts)
+// await run(opts)
