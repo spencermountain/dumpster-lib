@@ -5,9 +5,10 @@
   "description": "",
   "main": "./src/index.js",
   "type": "module",
+  "bin": "./src/index.js",
   "author": "Spencer Kelly <spencermountain@gmail.com> (http://spencermounta.in)",
   "scripts": {
-    "watch": "node --watch-path=./src scratch.js",
+    "watch": "npx .",
     "test": "node --test-reporter dot --test tests/ ",
     "lint": "eslint ."
   },

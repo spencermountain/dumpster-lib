@@ -19,9 +19,7 @@ const toParams = function (name, opts) {
   if (opts.lang) {
     cmd += ` --lang=${opts.lang}`
   }
-  if (opts.pageviews) {
-    cmd += ` --pageviews`
-  }
+  cmd += ` --pageviews=${opts.pageviews}`
   if (opts.format === 'json' || opts.format === 'text') {
     cmd += ` --format=${opts.format}`
   }

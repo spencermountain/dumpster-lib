@@ -10,10 +10,11 @@ const dbNameRegex = /<dbname>(.+)wiki<\/dbname>/
 async function findDbName(pathToFile) {
   const readable = fs.createReadStream(pathToFile)
   const reader = readline.createInterface({ input: readable })
-  const maxLinesToLookAt = 50
+  const maxLinesToLookAt = 250
   const line = await new Promise((resolve, reject) => {
     let i = 0
     reader.on('line', (line) => {
+      console.log(line)
       i++
       if (i > maxLinesToLookAt) {
         reader.close()
@@ -37,36 +38,37 @@ const readWiki = function (opts, eachPage) {
   const percent = 100 / workers
   const start = percent * index
   const end = start + percent
-  return findDbName(file).then((language) => {
-    const driver = {
-      file: file,
-      start: `${start}%`,
-      end: `${end}%`,
-      splitter: '</page>',
-      each: (xml, resume) => {
-        let pageTitle = 'Unknown page'
-        try {
-          const meta = parseXml(xml)
-          pageTitle = meta.title
-          meta.wiki = decode(meta.wiki)
-          meta.language = language
-          eachPage(meta)
-        } catch (e) {
-          console.log(
-            red(`\nWorker ${opts.index} couldn't process '${pageTitle}':\n got error ${e}`)
-          )
-        }
-        resume()
+  const language = opts.lang
+  // return findDbName(file).then((language) => {
+  const driver = {
+    file: file,
+    start: `${start}%`,
+    end: `${end}%`,
+    splitter: '</page>',
+    each: (xml, resume) => {
+      let pageTitle = 'Unknown page'
+      try {
+        const meta = parseXml(xml)
+        pageTitle = meta.title
+        meta.wiki = decode(meta.wiki)
+        meta.language = language
+        eachPage(meta)
+      } catch (e) {
+        console.log(
+          red(`\nWorker ${opts.index} couldn't process '${pageTitle}':\n got error ${e}`)
+        )
       }
+      resume()
     }
-    const p = sundayDriver(driver)
-    p.catch((err) => {
-      console.log(red('\n\n========== Worker error!  ====='))
-      console.log('🚨       worker #' + opts.index + '           🚨')
-      console.log(err)
-      console.log('\n\n')
-    })
-    return p
+  }
+  const p = sundayDriver(driver)
+  p.catch((err) => {
+    console.log(red('\n\n========== Worker error!  ====='))
+    console.log('🚨       worker #' + opts.index + '           🚨')
+    console.log(err)
+    console.log('\n\n')
   })
+  return p
+  // })
 }
 export default readWiki
