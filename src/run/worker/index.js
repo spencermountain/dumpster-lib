@@ -1,23 +1,41 @@
 import { workerData, parentPort } from 'worker_threads'
 import { JSONfn } from 'jsonfn'
-// import wtfLib from 'wtf_wikipedia'
 import reader from './01-reader.js'
 import { magenta } from '../_lib.js'
-// import output from '../output/index.js'
+import fs from 'node:fs'
 
 let {
   file,
   index,
   workers,
+  lang,
+  pageviews,
+  project,
   namespace,
   redirects,
   disambiguation,
   libPath
 } = workerData
+
 let methods = JSONfn.parse(workerData.methods)
 
 const lib = await import(libPath || 'wtf_wikipedia')
 const wtf = lib.default
+
+//spaces to underscores
+const encodeTitle = (title) => {
+  return title.trim().replace(/ /g, '_')
+}
+
+let viewCount = {}
+// load the pageviews dataset, if we asked for it
+if (pageviews && fs.existsSync('./pageviews.json')) {
+  try {
+    viewCount = JSON.parse(fs.readFileSync('./pageviews.json').toString())
+  } catch (e) {
+    console.error('Error parsing pageviews file:', e)
+  }
+}
 
 let status = {
   index,
@@ -40,6 +58,7 @@ const eachPage = function (meta) {
     status.skipped_namespace += 1
     return null
   }
+  meta.lang = meta.lang || lang
   // parse the wikitext
   let doc = wtf(meta.wiki, meta)
   // skip redirect pages
@@ -65,9 +84,14 @@ const eachPage = function (meta) {
       id: meta.pageID,
       revisionID: meta.revisionID,
       timestamp: meta.timestamp,
-      lang: meta.lang,
       ns: meta.namespace,
+      lang: lang,
+      project: project,
       body
+    }
+    result.encoded_title = encodeTitle(result.title)
+    if (pageviews === true) {
+      result.pageviews = viewCount[result.encoded_title] || 0
     }
     methods.output(result)
   }

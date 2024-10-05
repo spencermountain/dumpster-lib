@@ -16,8 +16,6 @@ class Pool extends EventEmitter {
     this.opts = opts
     this.workers = []
     this.methods = JSONfn.stringify(opts)
-    // create the results directory
-    makeDir(opts.outputDir)
     // start the logger
     this.heartbeat = setInterval(() => this.beat(), this.opts.heartbeat)
     this.status = [{}]
@@ -27,18 +25,18 @@ class Pool extends EventEmitter {
     let bytes = fs.statSync(this.opts.file)['size']
     const mb = Math.round(bytes / 1048576) + 'mb'
     console.log(`\n\nstarting ${blue(this.opts.workers)} workers on the ${yellow(mb)} file`)
-
     for (let i = 0; i < this.opts.workers; i += 1) {
       // Create each worker.
       let info = {
         workerData: {
           index: i,
           file: this.opts.file,
-          outputDir: this.opts.outputDir || './',
           libPath: this.opts.libPath,
-          outputMode: this.opts.outputMode,
           namespace: this.opts.namespace,
           redirects: this.opts.redirects,
+          lang: this.opts.lang,
+          pageviews: this.opts.pageviews,
+          project: this.opts.project,
           disambiguation: this.opts.disambiguation,
           wtfPath: this.opts.wtfPath,
           workers: this.opts.workers,

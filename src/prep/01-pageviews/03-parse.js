@@ -31,7 +31,7 @@ const parsePageviews = function (file, lang, project) {
     let a = arr[i].split(' ')
     let title = a[1]
     if (title !== undefined && a[4] !== '1') {
-      title = encodeTitle(title)
+      // title = encodeTitle(title)
       let num = Number(a[4])
       counts[title] = num
       if (num > max) {

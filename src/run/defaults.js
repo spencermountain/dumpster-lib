@@ -14,8 +14,6 @@ export default {
   heartbeat: 5000, //every 5 seconds
   // allow custom wtf library
   libPath: 'wtf_wikipedia',
-  // where the files go
-  outputDir: './',
   // should we return anything for this page?
   doPage: function () {
     return true
@@ -26,6 +24,6 @@ export default {
   },
   // our callback for each page
   output: function (res) {
-    console.log(res)
+    // console.log(res)
   }
 }
