@@ -15,7 +15,7 @@ const downloadFile = async function (dir) {
   let date = d.format('{year}{month-pad}{date-pad}')
   let file = path.join(dir, `./pageviews-${date}-user.bz2`)
   if (fs.existsSync(file)) {
-    console.log('   Pageviews file exists, skipping download.')
+    console.log('     Pageviews file exists, skipping download.')
     return file
   }
   const url = domain + `/other/pageview_complete/${y}/${m}/pageviews-${date}-user.bz2`

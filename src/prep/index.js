@@ -20,7 +20,7 @@ const getReady = async function (opts) {
   }
 
   console.log(`Downloading ${opts.lang} ${opts.project} dump`)
-  // await getDump(opts.lang, opts.project, dir)
+  await getDump(opts.lang, opts.project, dir)
 }
 
 export default getReady
