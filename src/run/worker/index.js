@@ -6,7 +6,7 @@ import { magenta } from '../_lib.js'
 import output from '../output/index.js'
 
 let {
-  input,
+  file,
   outputDir,
   outputMode,
   index,
@@ -78,7 +78,7 @@ const eachPage = function (meta) {
 
 setTimeout(() => {
   // start off the worker!
-  reader({ index, workers, file: input }, eachPage).then((doc) => {
+  reader({ index, workers, file }, eachPage).then((doc) => {
     console.log(magenta(`worker #${index} finished`))
     status.finished = true
   })

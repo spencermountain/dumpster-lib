@@ -4,12 +4,13 @@ import { elapsed } from '../_fns.js'
 import sh from 'shelljs'
 import path from 'node:path'
 import fs from 'node:fs'
+import { dim } from '../_fns.js'
 
 const getPageViews = async function (file) {
 
   let expected = file.replace(/\.bz2$/, '')
   if (fs.existsSync(expected)) {
-    console.log('   Pageviews file exists, skipping decompress.')
+    console.log(dim('   Pageviews file exists, skipping step.'))
     return expected
   }
 
@@ -20,9 +21,7 @@ const getPageViews = async function (file) {
   let cmd = `bzip2 -d ${file}`
   sh.exec(cmd)
 
-  console.log('done!');
   elapsed(start)
-  console.log('    Pageviews decomression done');
   return expected
 }
 export default getPageViews

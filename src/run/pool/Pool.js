@@ -12,7 +12,7 @@ const dir = path.dirname(fileURLToPath(import.meta.url))
 class Pool extends EventEmitter {
   constructor(opts) {
     super(opts)
-    checkFile(opts.input)
+    checkFile(opts.file)
     this.opts = opts
     this.workers = []
     this.methods = JSONfn.stringify(opts)
@@ -24,7 +24,7 @@ class Pool extends EventEmitter {
   }
   // kick off each worker, on a part of the file
   start() {
-    let bytes = fs.statSync(this.opts.input)['size']
+    let bytes = fs.statSync(this.opts.file)['size']
     const mb = Math.round(bytes / 1048576) + 'mb'
     console.log(`\n\nstarting ${blue(this.opts.workers)} workers on the ${yellow(mb)} file`)
 
@@ -33,8 +33,8 @@ class Pool extends EventEmitter {
       let info = {
         workerData: {
           index: i,
-          input: this.opts.input,
-          outputDir: this.opts.outputDir,
+          file: this.opts.file,
+          outputDir: this.opts.outputDir || './',
           libPath: this.opts.libPath,
           outputMode: this.opts.outputMode,
           namespace: this.opts.namespace,

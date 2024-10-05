@@ -8,7 +8,7 @@ const decompressDump = async function (file) {
   let start = Date.now()
   sh.exec(`bzip2 -d ${file}`)
   elapsed(start)
-  console.log('Wikimedia dump decomression done');
-  // sh.exec(`rm ${file}`)
+  console.log('   Wikimedia dump decomression done');
+  sh.exec(`rm ${file}`)
 }
 export default decompressDump

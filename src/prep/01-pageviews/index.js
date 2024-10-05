@@ -6,7 +6,7 @@ import parseFile from './03-parse.js'
 import { yellow } from '../_fns.js'
 
 const getPageViews = async function (opts) {
-  console.log(yellow(`\n   Downloading Wikimedia Pageviews dataset (~500mb):`))
+  console.log(yellow(`\n   Preparing Wikimedia Pageviews dataset (~500mb):`))
   let file = await downloadFile(opts.dir)
 
   let out = await decompress(file)

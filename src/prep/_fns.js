@@ -17,7 +17,7 @@ const getFileSize = async function (url) {
 const elapsed = function (start) {
   let diff = Date.now() - start
   let mins = diff / 1000 / 60
-  let msg = dim('took ' + round(mins) + ' mins\n\n')
+  let msg = dim('   took ' + round(mins) + ' mins\n\n')
   console.log(msg)
 }
 
@@ -41,4 +41,4 @@ const encodeTitle = function (title) {
 }
 
 
-export { elapsed, getFileSize, encodeTitle, red, blue, yellow, b }
+export { elapsed, getFileSize, encodeTitle, red, blue, yellow, b, dim }

@@ -3,6 +3,8 @@ import fetch from 'node-fetch'
 import fs from 'node:fs'
 import path from 'node:path'
 const blue = (str) => '\x1b[34m' + str + '\x1b[0m'
+const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
+
 
 function print(txt) {
   // console.log(txt)
@@ -17,7 +19,7 @@ const wget = async function (url, dir) {
   let file = path.join(dir, filename)
   // don't clobber existing file
   if (fs.existsSync(file) || fs.existsSync(file.replace(/\.bz2$/, ''))) {
-    console.log(blue(`\n   File exists, skipping download: \n'${file}'\n`))
+    console.log(dim(`\n   File exists, skipping download.`))
     return
   }
   const res = await fetch(url)

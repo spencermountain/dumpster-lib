@@ -13,6 +13,7 @@ const run = function (opts) {
   }
   // console.log(opts.libPath)
   opts = Object.assign({}, defaults, opts)
+  console.log(opts)
   return new Promise((resolve, reject) => {
     let pool = new Pool(opts)
     pool.on('end', () => resolve())

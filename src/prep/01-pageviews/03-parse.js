@@ -2,6 +2,7 @@ import sh from 'shelljs'
 import fs from 'node:fs'
 const tsvOut = './pageviews.tsv'
 const jsonOut = './pageviews.json'
+import { dim } from '../_fns.js'
 
 //spaces to underscores
 const encodeTitle = (title) => {
@@ -11,6 +12,12 @@ const encodeTitle = (title) => {
 const round = n => Math.round(n * 10) / 10
 
 const parsePageviews = function (file, lang, project) {
+
+  if (fs.existsSync(jsonOut)) {
+    console.log(dim('     Pageviews output file exists, skipping parsing.'))
+    return
+  }
+
   //filter large pageview file down to our project-lang only
   console.log(`\n     parsing ${lang} ${project} counts from pageview data:`)
   sh.exec(`grep '^${lang}.${project} .* desktop ' ${file} > ${tsvOut}`)
