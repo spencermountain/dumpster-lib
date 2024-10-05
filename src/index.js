@@ -4,7 +4,6 @@ import run from './run/index.js'
 
 
 let opts = await getPrompts()
-// console.log(opts)
 
 opts.output = function (res) {
   if (res.pageviews) {

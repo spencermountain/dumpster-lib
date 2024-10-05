@@ -4,13 +4,20 @@ const red = str => '\x1b[31m' + str + '\x1b[0m'
 const blue = str => '\x1b[34m' + str + '\x1b[0m'
 const yellow = str => '\x1b[33m' + str + '\x1b[0m'
 const b = str => '\x1b[1m' + str + '\x1b[0m'
+const green = str => '\x1b[32m' + str + '\x1b[0m'
+const cyan = str => '\x1b[36m' + str + '\x1b[0m'
 
 const round = (n) => Math.round(n * 10) / 10
 
+function humanFileSize(size) {
+  var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  return +((size / Math.pow(1024, i)).toFixed(2)) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+}
+
 const getFileSize = async function (url) {
   const response = await fetch(url, { method: 'head' });
-  const result = response.headers['content-length'];
-  console.log(`Target size: ${result}`);
+  const result = response.headers.get('content-length');
+  console.log(green(`     File size: ${humanFileSize(result)}`));
   return result
 }
 
@@ -41,4 +48,4 @@ const encodeTitle = function (title) {
 }
 
 
-export { elapsed, getFileSize, encodeTitle, red, blue, yellow, b, dim }
+export { elapsed, getFileSize, encodeTitle, red, blue, yellow, b, dim, cyan }

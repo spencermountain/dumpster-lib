@@ -1,5 +1,6 @@
 .DS_Store
 *.bz2
 *.xml
-pageviews.json
+*pageviews.json
+*pageviews.tsv
 pageviews-*
