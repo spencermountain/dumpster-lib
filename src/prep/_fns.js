@@ -1,5 +1,10 @@
 
 const dim = (str) => '\x1b[2m' + str + '\x1b[0m'
+const red = str => '\x1b[31m' + str + '\x1b[0m'
+const blue = str => '\x1b[34m' + str + '\x1b[0m'
+const yellow = str => '\x1b[33m' + str + '\x1b[0m'
+const b = str => '\x1b[1m' + str + '\x1b[0m'
+
 const round = (n) => Math.round(n * 10) / 10
 
 const getFileSize = async function (url) {
@@ -12,7 +17,7 @@ const getFileSize = async function (url) {
 const elapsed = function (start) {
   let diff = Date.now() - start
   let mins = diff / 1000 / 60
-  let msg = '\n\n ' + dim('took ' + round(mins) + ' mins')
+  let msg = dim('took ' + round(mins) + ' mins\n\n')
   console.log(msg)
 }
 
@@ -35,4 +40,5 @@ const encodeTitle = function (title) {
   return title
 }
 
-export { elapsed, getFileSize, encodeTitle }
+
+export { elapsed, getFileSize, encodeTitle, red, blue, yellow, b }

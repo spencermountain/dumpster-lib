@@ -2,13 +2,14 @@
 import fs from 'node:fs'
 import wget from '../_wget.js'
 import { getFileSize, elapsed } from '../_fns.js'
+import { yellow } from '../_fns.js'
 
 const downloadDump = async function (file, dir, proj) {
-  if (fs.existsSync(file + '.bz2')) {
+  if (fs.existsSync(file) || fs.existsSync(file + '.bz2')) {
     console.log(`  Wikimedia dump file exists, skipping download.`)
     return
   }
-  console.log('\n\nDownloading dump:')
+  console.log(yellow(`\n\nDownloading ${proj} dump:`))
   let url = `https://dumps.wikimedia.org/${proj}/latest/${proj}-latest-pages-articles.xml.bz2`
   await getFileSize(url)
 

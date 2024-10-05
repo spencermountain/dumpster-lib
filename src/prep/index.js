@@ -13,11 +13,11 @@ const getReady = async function (opts) {
     await getPageviews(opts)
   }
 
-  // download a dump, or re-use existing one
-  if (fs.existsSync(file) === true) {
-    console.log(`Unzipped file already exists, using '${file}'`)
-    return
-  }
+  // // download a dump, or re-use existing one
+  // if (fs.existsSync(file) === true) {
+  //   console.log(`      Unzipped file already exists, using '${file}'`)
+  //   return
+  // }
 
   console.log(`Downloading ${opts.lang} ${opts.project} dump`)
   await getDump(opts.lang, opts.project, dir)

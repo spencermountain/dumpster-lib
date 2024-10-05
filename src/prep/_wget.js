@@ -17,7 +17,7 @@ const wget = async function (url, dir) {
   let file = path.join(dir, filename)
   // don't clobber existing file
   if (fs.existsSync(file) || fs.existsSync(file.replace(/\.bz2$/, ''))) {
-    console.log(blue(`\nFile exists, skipping download: \n'${file}'\n`))
+    console.log(blue(`\n   File exists, skipping download: \n'${file}'\n`))
     return
   }
   const res = await fetch(url)

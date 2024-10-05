@@ -4,12 +4,11 @@ import sh from 'shelljs'
 // import decompress from '@xhmikosr/decompress';
 
 const decompressDump = async function (file) {
-  console.log('Decompressing file:')
+  console.log('  Decompressing file:')
   let start = Date.now()
-  // await decompress(file, '.')
-  let cmd = `bzip2 -d ${file}`
-  sh.exec(cmd)
+  sh.exec(`bzip2 -d ${file}`)
   elapsed(start)
   console.log('Wikimedia dump decomression done');
+  // sh.exec(`rm ${file}`)
 }
 export default decompressDump

@@ -4,8 +4,7 @@ import path from 'node:path'
 import downloadDump from './01-download.js'
 import decompressDump from './02-decompress.js'
 
-const getDump = async function (opts) {
-  let { lang, project, dir } = opts
+const getDump = async function (lang, project, dir) {
   // Filenames are 'enwiki', 'frwiktionary' etc,
   let proj = project === 'wikipedia' ? `${lang}wiki` : `${lang}${project}`
   let file = path.join(dir, `./${proj}-latest-pages-articles.xml`)

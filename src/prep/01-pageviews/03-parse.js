@@ -8,11 +8,12 @@ const encodeTitle = (title) => {
   return title.trim().replace(/ /g, '_')
 }
 
+const round = n => Math.round(n * 10) / 10
+
 const parsePageviews = function (file, lang, project) {
-  //filter-it down to our project only
-  console.log(`Parsing ${lang} ${project} counts from pageview data:`)
-  let cmd = `grep '^${lang}.${project} .* desktop ' ${file} > ${tsvOut}`
-  sh.exec(cmd)
+  //filter large pageview file down to our project-lang only
+  console.log(`\n     parsing ${lang} ${project} counts from pageview data:`)
+  sh.exec(`grep '^${lang}.${project} .* desktop ' ${file} > ${tsvOut}`)
 
   let counts = {}
   let max = 0
@@ -32,11 +33,9 @@ const parsePageviews = function (file, lang, project) {
       total += 1
     }
   }
-  console.log('  writing pageviews:')
   fs.writeFileSync(jsonOut, JSON.stringify(counts, null, 2))
-  console.log('    wrote pageviews json')
   console.log(`    max pageview: ${max.toLocaleString()}`)
-  console.log('    mean: ', total / Object.keys(counts).length)
+  console.log('    mean: ', round(total / Object.keys(counts).length))
   console.log('\n\n')
 
   // cleanup tmp file
