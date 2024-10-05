@@ -3,12 +3,10 @@ import { JSONfn } from 'jsonfn'
 // import wtfLib from 'wtf_wikipedia'
 import reader from './01-reader.js'
 import { magenta } from '../_lib.js'
-import output from '../output/index.js'
+// import output from '../output/index.js'
 
 let {
   file,
-  outputDir,
-  outputMode,
   index,
   workers,
   namespace,
@@ -59,7 +57,6 @@ const eachPage = function (meta) {
     return null
   }
   // actually process the page
-
   let body = methods.parse(doc)
   if (body) {
     status.written += 1
@@ -72,7 +69,7 @@ const eachPage = function (meta) {
       ns: meta.namespace,
       body
     }
-    output(result, meta.title, { outputDir, outputMode })
+    methods.output(result)
   }
 }
 

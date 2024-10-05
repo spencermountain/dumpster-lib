@@ -23,5 +23,9 @@ export default {
   // what do return, for every page
   parse: function (doc) {
     return doc.json()
+  },
+  // our callback for each page
+  output: function (res) {
+    console.log(res)
   }
 }

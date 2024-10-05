@@ -28,11 +28,14 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "html-entities": "^2.5.2",
     "jsonfn": "^0.31.0",
     "node-fetch": "^3.3.2",
     "prompts": "^2.4.2",
     "shelljs": "^0.8.5",
     "spacetime": "^7.6.1",
+    "sunday-driver": "^1.0.2",
+    "wtf_wikipedia": "^10.3.2",
     "yargs": "^17.7.2"
   },
   "license": "MIT"
