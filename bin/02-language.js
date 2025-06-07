@@ -1,4 +1,5 @@
 import prompts from 'prompts'
+import languages from '../src/data/languages.js'
 
 const getLanguage = async function () {
 
@@ -8,7 +9,7 @@ const getLanguage = async function () {
     message: 'Which language?',
     initial: `en`,
     validate: (val) => {
-      if (!val || val.length !== 2) {
+      if (!val || !languages.hasOwnProperty(val)) {
         return `'${val}' is invalid - Please provide a 2-letter language code, like 'fr' for French.`
       }
       return true
