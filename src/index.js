@@ -6,8 +6,9 @@ import run from './run/index.js'
 
 let opts = await getPrompts()
 opts.output = opts.output || function (res) {
-  console.log(res.title, res.lang, res.pageviews)
+  console.log(res)
 }
+console.log(opts)
 
 // download+unzip files
 await prepare(opts)
