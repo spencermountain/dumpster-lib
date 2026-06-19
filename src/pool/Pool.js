@@ -51,7 +51,7 @@ class Pool extends EventEmitter {
         // if we have a result, collect it
         if (msg.result) {
           // console.log('msg', this.results.length, 'of', this.opts.chunkSize)
-          this.results.push(msg.result.body)
+          this.results.push(msg.result)
           // if we've reached the chunk size, emit the chunk
           if (this.results.length >= this.opts.chunkSize) {
             this.emit('chunk', this.results)
