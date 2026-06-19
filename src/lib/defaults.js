@@ -14,18 +14,5 @@ export default {
   heartbeat: 5000, //every 5 seconds
   // how many pages to process at a time
   chunks: 10,
-  // allow custom wtf library
-  libPath: 'wtf_wikipedia',
-  // should we return anything for this page?
-  doPage: function () {
-    return true
-  },
-  // what do return, for every page
-  parse: function (doc) {
-    return doc.json()
-  },
-  // our callback for each page
-  output: function (res) {
-    // console.log(res)
-  }
+
 }

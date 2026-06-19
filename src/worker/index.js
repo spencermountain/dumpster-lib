@@ -39,9 +39,7 @@ const eachPage = function (meta) {
   let wantPage = wantThisPage(result)
   if (wantPage === true) {
     status.written += 1
-    // methods.output(result)
-    // parentPort.postMessage({ result })
-
+    parentPort.postMessage({ result })
   } else if (wantPage === 'redirect') {
     status.skipped_redirect += 1
   } else if (wantPage === 'disambig') {

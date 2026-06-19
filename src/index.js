@@ -12,12 +12,15 @@ const run = function (opts) {
     opts.libPath = path.join(dir, opts.libPath)
   }
   opts = Object.assign({}, defaults, opts)
-  // return new Promise((resolve, reject) => {
   let pool = new Pool(opts)
-  // pool.on('end', () => resolve())
-  // pool.on('error', (e) => reject(e))
   pool.start()
-  return pool
-  // })
+  return new Promise((resolve, reject) => {
+    pool.on('end', () => {
+      resolve()
+    })
+    pool.on('error', (err) => {
+      reject(err)
+    })
+  })
 }
 export default run
