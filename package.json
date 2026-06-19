@@ -1,48 +1,31 @@
 {
   "name": "dumpster-lib",
   "version": "0.0.1",
-  "private": true,
-  "description": "",
+  "description": "shared library for parsing wikimedia dumps",
   "main": "./src/index.js",
   "type": "module",
-  "bin": "./src/index.js",
   "author": "Spencer Kelly <spencermountain@gmail.com> (http://spencermounta.in)",
-  "scripts": {
-    "watch": "npx .",
-    "test": "node --test-reporter dot --test tests/ ",
-    "lint": "eslint ."
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spencermountain/dumpster-dip.git"
+    "url": "git+https://github.com/spencermountain/dumpster-lib.git"
   },
   "bugs": {
-    "url": "https://github.com/spencermountain/dumpster-dip/issues"
+    "url": "https://github.com/spencermountain/dumpster-lib/issues"
   },
-  "homepage": "https://github.com/spencermountain/dumpster-dip#readme",
-  "exports": {
-    ".": {
-      "import": "./src/index.js"
-    }
-  },
+  "homepage": "https://github.com/spencermountain/dumpster-lib#readme",
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "html-entities": "^2.5.2",
-    "jsonfn": "^0.31.0",
-    "node-fetch": "^3.3.2",
-    "prompts": "^2.4.2",
-    "shelljs": "^0.8.5",
-    "spacetime": "^7.6.1",
-    "sunday-driver": "^1.0.2",
-    "wtf-plugin-classify": "^2.1.0",
-    "wtf-plugin-html": "^1.0.0",
-    "wtf-plugin-i18n": "^1.0.2",
-    "wtf-plugin-markdown": "^1.0.1",
-    "wtf-plugin-summary": "^1.0.0",
-    "wtf_wikipedia": "^10.3.2",
-    "yargs": "^17.7.2"
+    "html-entities": "2.6.0",
+    "sunday-driver": "1.0.2",
+    "wtf-plugin-classify": "2.1.0",
+    "wtf-plugin-html": "1.0.0",
+    "wtf-plugin-i18n": "1.0.2",
+    "wtf-plugin-markdown": "1.0.1",
+    "wtf-plugin-summary": "1.0.0",
+    "wtf_wikipedia": "10.4.2"
   },
   "license": "MIT"
 }
