@@ -12,6 +12,8 @@ export default {
   workers: cpuCount, // default is cpu count
   //interval to log status
   heartbeat: 5000, //every 5 seconds
+  // how many pages to process at a time
+  chunks: 10,
   // allow custom wtf library
   libPath: 'wtf_wikipedia',
   // should we return anything for this page?

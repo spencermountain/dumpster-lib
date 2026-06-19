@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import fs from 'node:fs'
-import { red, blue, grey } from '../_lib.js'
+import { red, blue, grey } from '../lib/colors.js'
 import path from 'node:path'
 const root = process.cwd()
 

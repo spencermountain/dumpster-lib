@@ -1,12 +1,14 @@
-import run from './src/run/index.js'
+import run from './src/index.js'
 
-run({
+let foo = run({
   project: 'wikipedia',
-  lang: 'simple',
-  pageviews: false,
+  lang: 'sw',
   format: 'text',
+  chunks: 10,
   output: function (res) {
-    console.log(res)
+    console.log('--', res)
   },
-  file: '/Users/spencer/Desktop/wikipedia/simplewiki-latest-pages-articles.xml'
+  file: '/Volumes/4TB/wikipedia/swwiki-latest-pages-articles.xml'
 })
+
+console.log(foo)

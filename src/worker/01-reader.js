@@ -1,37 +1,7 @@
-import fs from 'node:fs'
 import parseXml from './02-xml.js'
-import readline from 'readline'
 import sundayDriver from 'sunday-driver'
 import { decode } from 'html-entities'
-import { red } from '../_lib.js'
-
-const dbNameRegex = /<dbname>(.+)wiki<\/dbname>/
-
-async function findDbName(pathToFile) {
-  const readable = fs.createReadStream(pathToFile)
-  const reader = readline.createInterface({ input: readable })
-  const maxLinesToLookAt = 250
-  const line = await new Promise((resolve, reject) => {
-    let i = 0
-    reader.on('line', (line) => {
-      console.log(line)
-      i++
-      if (i > maxLinesToLookAt) {
-        reader.close()
-        reject(`Didn't find dbname in first ${maxLinesToLookAt} lines`)
-      }
-
-      const match = line.match(dbNameRegex)
-      if (match !== null) {
-        const dbName = match[1]
-        reader.close()
-        resolve(dbName)
-      }
-    })
-  })
-  readable.close()
-  return line
-}
+import { red } from '../lib/colors.js'
 
 const readWiki = function (opts, eachPage) {
   const { index, workers, file } = opts
@@ -39,7 +9,6 @@ const readWiki = function (opts, eachPage) {
   const start = percent * index
   const end = start + percent
   const language = opts.lang
-  // return findDbName(file).then((language) => {
   const driver = {
     file: file,
     start: `${start}%`,
@@ -69,6 +38,5 @@ const readWiki = function (opts, eachPage) {
     console.log('\n\n')
   })
   return p
-  // })
 }
 export default readWiki

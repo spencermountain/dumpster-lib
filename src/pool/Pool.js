@@ -3,10 +3,9 @@ import fs from 'node:fs'
 import EventEmitter from 'events'
 import { Worker } from 'worker_threads'
 import { fileURLToPath } from 'node:url'
-import { JSONfn } from 'jsonfn'
-import { checkFile, makeDir } from './prep.js'
+import { checkFile } from './prep.js'
 import getSummary from './summary.js'
-import { blue, yellow, magenta, grey } from '../_lib.js'
+import { blue, yellow, magenta, grey } from '../lib/colors.js'
 const dir = path.dirname(fileURLToPath(import.meta.url))
 
 class Pool extends EventEmitter {
@@ -15,7 +14,6 @@ class Pool extends EventEmitter {
     checkFile(opts.file)
     this.opts = opts
     this.workers = []
-    this.methods = JSONfn.stringify(opts)
     // start the logger
     this.heartbeat = setInterval(() => this.beat(), this.opts.heartbeat)
     this.status = [{}]
@@ -40,7 +38,6 @@ class Pool extends EventEmitter {
           disambiguation: this.opts.disambiguation,
           wtfPath: this.opts.wtfPath,
           workers: this.opts.workers,
-          methods: this.methods
         }
       }
       const file = path.join(dir, '../worker/index.js')

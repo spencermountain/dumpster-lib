@@ -1,4 +1,4 @@
-import { green, red, blue, magenta, cyan, grey, yellow, black, dim } from '../_lib.js'
+import { green, magenta, cyan, grey, dim } from '../lib/colors.js'
 
 // calculate sums from each worker
 const calc = function (arr) {
