@@ -13,6 +13,7 @@ export default {
   //interval to log status
   heartbeat: 5000, //every 5 seconds
   // how many pages to process at a time
-  chunks: 10,
-
+  chunkSize: 10,
+  // what format to output the pages in
+  format: 'json',
 }

@@ -9,7 +9,8 @@ let {
   index,
   workers,
   lang,
-  namespace
+  namespace,
+  format
 } = workerData
 
 let status = {
@@ -34,7 +35,7 @@ const eachPage = function (meta) {
     return null
   }
   meta.lang = meta.lang || lang
-  let result = parsePage(meta)
+  let result = parsePage(meta, format)
   // apply filters
   let wantPage = wantThisPage(result)
   if (wantPage === true) {

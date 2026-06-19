@@ -5,7 +5,8 @@ await run({
   project: 'wikipedia',
   lang: 'sw',
   format: 'text',
-  chunks: 10,
+  chunkSize: 10,
+  format: 'text',
   file: '/Volumes/4TB/wikipedia/swwiki-latest-pages-articles.xml'
 })
 

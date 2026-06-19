@@ -22,8 +22,7 @@ const parsePage = function (meta, fmt) {
   let doc = wtf(meta.wiki, meta)
   // actually process the page
   let body = toOutputFormat(doc, fmt)
-  let title = meta.title || doc.title()
-
+  let title = meta.title //|| doc.title()
   const result = {
     title,
     id: meta.pageID,

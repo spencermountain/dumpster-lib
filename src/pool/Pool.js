@@ -3,8 +3,8 @@ import fs from 'node:fs'
 import EventEmitter from 'events'
 import { Worker } from 'worker_threads'
 import { fileURLToPath } from 'node:url'
-import { checkFile } from './prep.js'
-import getSummary from './summary.js'
+import { checkFile } from './_prep.js'
+import getSummary from './_summary.js'
 import { blue, yellow, magenta, grey } from '../lib/colors.js'
 const dir = path.dirname(fileURLToPath(import.meta.url))
 
@@ -17,6 +17,7 @@ class Pool extends EventEmitter {
     // start the logger
     this.heartbeat = setInterval(() => this.beat(), this.opts.heartbeat)
     this.status = [{}]
+    this.results = []
   }
   // kick off each worker, on a part of the file
   start() {
@@ -29,15 +30,14 @@ class Pool extends EventEmitter {
         workerData: {
           index: i,
           file: this.opts.file,
-          libPath: this.opts.libPath,
           namespace: this.opts.namespace,
           redirects: this.opts.redirects,
           lang: this.opts.lang,
           pageviews: this.opts.pageviews,
           project: this.opts.project,
           disambiguation: this.opts.disambiguation,
-          wtfPath: this.opts.wtfPath,
           workers: this.opts.workers,
+          format: this.opts.format,
         }
       }
       const file = path.join(dir, '../worker/index.js')
@@ -48,7 +48,13 @@ class Pool extends EventEmitter {
           this.status[msg.status.index] = msg.status
         }
         if (msg.result) {
-          console.log('msg', msg)
+          // collect this result
+          console.log('msg', this.results.length, 'of', this.opts.chunkSize)
+          this.results.push(msg.result)
+          if (this.results.length >= this.opts.chunkSize) {
+            this.emit('chunk', this.results)
+            this.results = []
+          }
         }
       })
       worker.on('error', (err) => console.error(err))
