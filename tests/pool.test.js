@@ -2,7 +2,7 @@ import { test, after } from 'node:test'
 import assert from 'node:assert'
 import { rmSync } from 'node:fs'
 import dumpster from '../src/index.js'
-import makeFixture from './fixture.js'
+import makeFixture from '../src/lib/fixture.js'
 
 const fixture = makeFixture(300)
 after(() => rmSync(fixture.dir, { recursive: true, force: true }))
@@ -101,4 +101,23 @@ test('listeners attached after the call are still in place when the first batch 
   pool.on('batch', (pages) => (n += pages.length))
   await pool.done
   assert.equal(n, fixture.expect.articles.length)
+})
+
+test('md format includes templates', async () => {
+  const pool = dumpster({ ...base, workers: 1, format: 'md' })
+  let page = null
+  pool.on('batch', (pages) => (page = page || pages.find((p) => p.title === 'Page 1')))
+  await pool.done
+  assert.equal(page.templates.find((t) => t.template === 'tinytown data').founded, '1801')
+  assert.ok(Array.isArray(page.links))
+})
+
+test('a missing file rejects done, with a helpful error', async () => {
+  const pool = dumpster({ ...base, file: '/nope/enwiki-latest-pages-articles.xml' })
+  await assert.rejects(pool.done, /can't find file/)
+})
+
+test('an unknown format rejects done', async () => {
+  const pool = dumpster({ ...base, format: 'yaml' })
+  await assert.rejects(pool.done, /unknown format 'yaml'/)
 })

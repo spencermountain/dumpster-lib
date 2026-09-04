@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { rmSync } from 'node:fs'
 import pages from '../src/worker/01-reader.js'
 import partition from '../src/pool/_partition.js'
-import makeFixture from './fixture.js'
+import makeFixture from '../src/lib/fixture.js'
 
 const fixture = makeFixture(300)
 after(() => rmSync(fixture.dir, { recursive: true, force: true }))

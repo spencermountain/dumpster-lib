@@ -59,7 +59,7 @@ const stats = await pool.done
 ### Options
 
 - `file` - path to the (unzipped) xml dump
-- `format` - shape of each page: `text`, `sm`, `md`, `lg`, `xl`, `html`, `markdown`, `json` (default)
+- `format` - shape of each page: `text`, `sm` (type, summary, categories, infobox), `md` (sm + templates, links, intro), `lg`, `xl`, `html`, `markdown`, `json` (default)
 - `batchPageCount` - pages per batch (default 100)
 - `workers` - parsing threads (default: cpu count − 1, leaving a core for the main thread and your writer)
 - `highWater` - batches the main thread holds before pausing the workers (default: one per worker)
@@ -71,3 +71,12 @@ const stats = await pool.done
 the heartbeat prints each worker's page count, then `queue` (batches waiting for your writer), `parked` (workers paused waiting for room) and memory. if `parked` sits near the worker count, the writer is the bottleneck - try fewer workers, or bigger batches.
 
 MIT
+
+### Testing a writer
+
+`dumpster-lib/fixture` builds a tiny, realistic dump in a temp directory, for the tests of a writer library:
+
+```js
+import makeFixture from 'dumpster-lib/fixture'
+const { file, dir, expect } = makeFixture(300) // 300 pages. expect.articles lists the titles that should arrive
+```

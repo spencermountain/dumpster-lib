@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import EventEmitter from 'node:events'
 import { Worker } from 'node:worker_threads'
 import { fileURLToPath } from 'node:url'
-import { checkFile } from './_prep.js'
+import { checkOptions } from './_prep.js'
 import partition from './_partition.js'
 import { calc, printSummary } from './_summary.js'
 import { blue, yellow, magenta, grey } from '../lib/colors.js'
@@ -48,7 +48,7 @@ class Pool extends EventEmitter {
   // kick off each worker, on a part of the file
   start() {
     const { file, workers } = this.opts
-    checkFile(file)
+    checkOptions(this.opts)
     const ranges = partition(file, workers)
     if (!this.highWater) {
       this.highWater = Math.max(1, ranges.length)

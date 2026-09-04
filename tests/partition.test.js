@@ -3,7 +3,7 @@ import assert from 'node:assert'
 import { readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import partition from '../src/pool/_partition.js'
-import makeFixture from './fixture.js'
+import makeFixture from '../src/lib/fixture.js'
 
 const fixture = makeFixture(200)
 after(() => rmSync(fixture.dir, { recursive: true, force: true }))

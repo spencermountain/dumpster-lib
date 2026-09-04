@@ -49,7 +49,7 @@ const makeFixture = function (count = 300) {
     } else {
       const reps = id % 40 === 1 ? 600 : 1 + (id % 5) // a few ~70kb pages
       let text = para.repeat(reps)
-      text += `\n\n==History==\nFounded in ${1800 + id}.\n[[Category:Towns]]`
+      text += `\n{{Tinytown data|founded=${1800 + id}|mayor=Ann}}\n\n==History==\nFounded in ${1800 + id}.\n[[Category:Towns]]`
       pages.push({ id, title, ns: 0, text })
       expect.articles.push(title)
     }

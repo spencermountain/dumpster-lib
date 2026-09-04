@@ -1,29 +1,18 @@
-/* eslint-disable no-console */
 import fs from 'node:fs'
-import { red, blue, grey } from '../lib/colors.js'
-import path from 'node:path'
-const root = process.cwd()
 
-const checkFile = function (file) {
+const formats = ['text', 'sm', 'md', 'lg', 'xl', 'html', 'markdown', 'json']
+
+// throw early on bad options. the pool turns this into an 'error' event and a rejected `done`
+const checkOptions = function (opts) {
+  const { file, format } = opts
   if (!file || !fs.existsSync(file)) {
-    console.log(red('\n  --can\'t find file:  "' + blue(file) + '" ---'))
-    console.log(grey('     please supply a filename for the wikipedia article dump in xml format'))
-    process.exit(1)
+    throw new Error(`can't find file '${file}' - please supply the path to a wikipedia dump, in xml format`)
   }
   if (/\.bz2$/.test(file)) {
-    console.log(red('\n    --- hello, please unzip this file first  ---'))
-    console.log(grey('     ($ bzip2 -d ' + file + ' )'))
-    process.exit(1)
+    throw new Error(`please unzip this file first:  $ bzip2 -d ${file}`)
+  }
+  if (!formats.includes(format)) {
+    throw new Error(`unknown format '${format}' - expected one of: ${formats.join(', ')}`)
   }
 }
-
-const makeDir = function (name) {
-  let dir = name
-  if (!path.isAbsolute(name)) {
-    dir = path.join(root, name)
-  }
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
-}
-export { checkFile, makeDir }
+export { checkOptions, formats }

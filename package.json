@@ -30,6 +30,7 @@
   },
   "license": "MIT",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./fixture": "./src/lib/fixture.js"
   }
 }
