@@ -9,9 +9,9 @@ import { red } from '../lib/colors.js'
 // each worker reads one byte-range of the dump:
 //   read '<page>' blocks → wtf_wikipedia → post a batch every `batchPageCount` pages.
 //
-// backpressure: after posting a batch we await an 'ack' from the pool before
-// reading further. the reader is pull-based, so while we wait the file-read
-// stops too - a slow writer never piles pages up in memory anywhere.
+// backpressure: after handing over a batch we pause until the pool sends
+// 'resume', meaning it has room for more. the reader is pull-based, so while
+// we wait the file-read stops too - a slow writer never piles pages up anywhere.
 
 const { index, file, start, end, lang, namespace, format, batchPageCount } = workerData
 
@@ -28,17 +28,18 @@ const status = {
   written: 0,
 }
 
-let onAck = null
-const send = function (msg) {
+// post a batch, then pause until the pool tells us to resume
+let onResume = null
+const handOver = function (msg) {
   return new Promise((resolve) => {
-    onAck = resolve
+    onResume = resolve
     parentPort.postMessage(msg)
   })
 }
 parentPort.on('message', (msg) => {
-  if (msg.type === 'ack' && onAck !== null) {
-    const fn = onAck
-    onAck = null
+  if (msg.type === 'resume' && onResume !== null) {
+    const fn = onResume
+    onResume = null
     fn()
   }
 })
@@ -86,12 +87,12 @@ const run = async function () {
         batch.push(page)
       }
       if (batch.length >= batchPageCount) {
-        await send({ type: 'batch', pages: batch, status })
+        await handOver({ type: 'batch', pages: batch, status })
         batch = []
       }
     }
     if (batch.length > 0) {
-      await send({ type: 'batch', pages: batch, status })
+      await handOver({ type: 'batch', pages: batch, status })
     }
     status.finished = true
     parentPort.postMessage({ type: 'done', status })

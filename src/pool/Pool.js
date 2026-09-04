@@ -13,22 +13,22 @@ const workerFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '../w
 // the worker pool, and the backpressure between the workers and your writer.
 //
 // flow of a batch:
-//   a worker posts {batch} and pauses itself until we ack
+//   a worker posts {batch} and pauses itself until we tell it to resume
 //   → the pool pushes it onto `queue`
 //   → writerLoop() hands batches to the 'batch' listeners one at a time,
 //     awaiting whatever they return (a promise, or nothing at all)
-//   → the worker's ack is sent right away if the queue is short,
+//   → 'resume' is sent right away if the queue is short,
 //     or held until the writer catches up, if it's backed-up.
 //
 // memory stays bounded at ~(highWater + workers) batches no matter how slow the
-// writer is: every worker is stalled awaiting an ack before it parses more.
+// writer is: every worker is paused, waiting for 'resume', before it parses more.
 class Pool extends EventEmitter {
   constructor(opts) {
     super()
     this.opts = opts
     this.workers = []
     this.queue = [] // batches waiting for the writer
-    this.parked = [] // workers whose ack we're holding back
+    this.parked = [] // paused workers we have not yet told to resume
     this.status = {} // the latest status object from each worker, by index
     this.stats = { batches: 0, written: 0, maxQueue: 0, parked: 0 }
     this.highWater = opts.highWater
@@ -104,7 +104,7 @@ class Pool extends EventEmitter {
       this.stats.maxQueue = Math.max(this.stats.maxQueue, this.queue.length)
       this.wake()
       if (this.queue.length <= this.highWater) {
-        worker.postMessage({ type: 'ack' })
+        worker.postMessage({ type: 'resume' })
       } else {
         this.stats.parked += 1
         this.parked.push(worker) // writer is backed-up - hold this worker
@@ -146,7 +146,7 @@ class Pool extends EventEmitter {
       this.stats.batches += 1
       this.stats.written += pages.length
       if (this.queue.length < this.highWater) {
-        this.release()
+        this.resumeParked()
       }
       // let worker messages and the heartbeat interleave, even with a sync writer
       await new Promise((resolve) => setImmediate(resolve))
@@ -156,10 +156,10 @@ class Pool extends EventEmitter {
     }
   }
 
-  release() {
+  resumeParked() {
     const parked = this.parked
     this.parked = []
-    parked.forEach((w) => w.postMessage({ type: 'ack' }))
+    parked.forEach((w) => w.postMessage({ type: 'resume' }))
   }
 
   async finish() {
