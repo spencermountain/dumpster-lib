@@ -4,6 +4,8 @@ import wtfPluginClassify from 'wtf-plugin-classify'
 import wtfPluginHtml from 'wtf-plugin-html'
 import wtfPluginMarkdown from 'wtf-plugin-markdown'
 import wtfPluginI18n from 'wtf-plugin-i18n'
+import sm from './output/sm.js'
+import md from './output/md.js'
 
 wtf.plugin(wtfPluginI18n)
 wtf.plugin(wtfPluginSummary)
@@ -11,8 +13,6 @@ wtf.plugin(wtfPluginClassify)
 wtf.plugin(wtfPluginHtml)
 wtf.plugin(wtfPluginMarkdown)
 
-import sm from './fmt/sm.js'
-import md from './fmt/md.js'
 
 //spaces to underscores
 const encodeTitle = (title) => {
@@ -29,13 +29,13 @@ const toOutputFormat = (doc, fmt) => {
   } else if (fmt === 'lg') {
     return doc.json()
   } else if (fmt === 'xl') {
-    let res = lg(doc)
+    let res = doc.json()
     res.text = doc.text()
     return res
   } else if (fmt === 'html') {
     return { html: doc.html() }
   } else if (fmt === 'markdown') {
-    return { html: doc.html() }
+    return { markdown: doc.markdown() }
   } else if (fmt === 'json') {
     return doc.json()
   } else {

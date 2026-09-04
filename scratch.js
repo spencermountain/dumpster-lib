@@ -1,15 +1,15 @@
 import dumpster from './src/index.js'
 
 console.log('start')
-dumpster({
+const pool = dumpster({
   project: 'wikipedia',
   lang: 'sw',
+  batchPageCount: 100,
   format: 'text',
-  chunkSize: 10,
-  format: 'text',
-  file: '/Volumes/4TB/wikipedia/swwiki-latest-pages-articles.xml'
-}).on('end', () => {
-  console.log('end')
+  file: '/Volumes/4TB/wikipedia/swwiki-latest-pages-articles.xml',
 })
-
-// console.log('end')
+pool.on('batch', (pages) => {
+  console.log('batch of', pages.length)
+})
+const stats = await pool.done
+console.log('end', stats)

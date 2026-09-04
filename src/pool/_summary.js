@@ -6,6 +6,7 @@ const calc = function (arr) {
     processed: 0,
     skipped: 0,
     written: 0,
+    errors: 0,
 
     skipped_namespace: 0,
     skipped_redirect: 0,
@@ -13,12 +14,13 @@ const calc = function (arr) {
     skipped_empty: 0
   }
   arr.forEach((o) => {
-    sums.processed += o.processed
-    sums.written += o.written
-    sums.skipped_namespace += o.skipped_namespace
-    sums.skipped_redirect += o.skipped_redirect
-    sums.skipped_disambig += o.skipped_disambig
-    sums.skipped_empty += o.skipped_empty
+    sums.processed += o.processed || 0
+    sums.written += o.written || 0
+    sums.errors += o.errors || 0
+    sums.skipped_namespace += o.skipped_namespace || 0
+    sums.skipped_redirect += o.skipped_redirect || 0
+    sums.skipped_disambig += o.skipped_disambig || 0
+    sums.skipped_empty += o.skipped_empty || 0
   })
   sums.skipped =
     sums.skipped_namespace + sums.skipped_redirect + sums.skipped_disambig + sums.skipped_empty
@@ -26,7 +28,7 @@ const calc = function (arr) {
 }
 
 const percent = (sum, total) => {
-  let p = parseInt((sum / total) * 100, 10)
+  let p = total === 0 ? 0 : parseInt((sum / total) * 100, 10)
   return grey(' (' + p + '%)')
 }
 const num = (n) => {
@@ -34,8 +36,7 @@ const num = (n) => {
 }
 const round = (n) => Math.round(n * 10) / 10
 
-const getSummary = function (arr) {
-  let res = calc(arr)
+const printSummary = function (res) {
   let all = res.processed
   let msg = `\n\n\n${dim('-----------')}\n`
   msg += '\nProcessed:'.padEnd(16) + magenta(num(all)) + ' pages'
@@ -45,10 +46,12 @@ const getSummary = function (arr) {
   msg += '\n     - redirects:'.padEnd(20) + cyan(num(res.skipped_redirect))
   msg += '\n     - disambig:'.padEnd(20) + cyan(num(res.skipped_disambig))
   msg += '\n     - empty:'.padEnd(20) + cyan(num(res.skipped_empty))
-
-  let diff = Date.now() - arr[0].started_at
-  let mins = diff / 1000 / 60
-  msg += '\n\n ' + dim('took ' + round(mins) + ' mins')
+  if (res.errors > 0) {
+    msg += '\nErrors:'.padEnd(16) + cyan(num(res.errors))
+  }
+  msg += '\n\n ' + dim(`${res.batches.toLocaleString()} batches, queue peaked at ${res.maxQueue}, workers paused ${res.parked.toLocaleString()} times`)
+  let mins = res.took / 1000 / 60
+  msg += '\n ' + dim('took ' + round(mins) + ' mins')
   console.log(msg)
 }
-export default getSummary
+export { calc, printSummary }

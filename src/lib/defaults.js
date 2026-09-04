@@ -8,12 +8,16 @@ export default {
   redirects: false,
   // whether to include disambiguiation pages
   disambiguation: true,
-  // define how many concurrent workers to run
-  workers: cpuCount, // default is cpu count
-  //interval to log status
+  // how many worker threads parse the file.
+  // one core is left for the main thread, which deserializes batches and runs your writer
+  workers: Math.max(1, cpuCount - 1),
+  // how many pages each worker parses before handing them to your 'batch' listener
+  batchPageCount: 100,
+  // how many batches the main thread will hold for a slow writer, before pausing the workers.
+  // (null defaults to one per worker. peak memory is about (highWater + workers) batches)
+  highWater: null,
+  //interval to log status (0 to disable)
   heartbeat: 5000, //every 5 seconds
-  // how many pages to process at a time
-  chunkSize: 10,
   // what format to output the pages in
   format: 'json',
 }
