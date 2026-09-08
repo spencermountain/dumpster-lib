@@ -1,6 +1,8 @@
 import fs from 'node:fs'
 import { formats } from '../pool/_prep.js'
 
+const fileExists = (v) => (v && fs.existsSync(v) ? undefined : `no file found at '${v}'`)
+
 // one declarative list of the pool's options, used to drive BOTH the commander flags
 // and the clack prompts - so a param is described in exactly one place.
 //
@@ -76,6 +78,5 @@ const passedParams = function (program, params) {
   return out
 }
 
-const fileExists = (v) => (v && fs.existsSync(v) ? undefined : `no file found at '${v}'`)
 
 export { baseParams, applyParams, passedParams, fileExists }

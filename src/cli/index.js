@@ -19,7 +19,14 @@ const promptParam = async function (p, initial) {
       initialValue: initial != null ? String(initial) : '',
       validate: (v) => (v && Number.isNaN(Number(v)) ? 'must be a number' : undefined),
     })
-    res = isCancel(r) ? r : r === '' ? initial : Number(r)
+    if (isCancel(r)) {
+      res = r
+    } else if (r === '') {
+      res = initial
+    } else {
+      res = Number(r)
+    }
+
   } else {
     res = await text({
       message: p.desc,
@@ -105,7 +112,8 @@ const run = async function (config = {}) {
     config.writer(pool, opts)
   }
   try {
-    return await pool.done
+    await pool.done
+    return
   } catch (err) {
     // the pool has already torn down; surface the reason and fail the process
     log.error(err.message || String(err))

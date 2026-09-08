@@ -143,7 +143,8 @@ class Pool extends EventEmitter {
       try {
         await Promise.all(this.rawListeners('batch').map((fn) => fn(pages)))
       } catch (err) {
-        return this.abort(err)
+        this.abort(err)
+        return
       }
       this.stats.batches += 1
       this.stats.written += pages.length
@@ -156,6 +157,7 @@ class Pool extends EventEmitter {
     if (this.error === null) {
       await this.finish()
     }
+    return
   }
 
   resumeParked() {
@@ -179,7 +181,7 @@ class Pool extends EventEmitter {
     }
     await this.stopWorkers()
     dashboard.report(stats)
-    this.resolveDone(stats)
+    return this.resolveDone(stats)
   }
 
   async abort(err) {

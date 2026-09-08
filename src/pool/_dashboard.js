@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Table from 'cli-table3'
 import logUpdate from 'log-update'
 import { enabled, green, yellow, blue, red, cyan, grey, dim, magenta } from '../lib/colors.js'
@@ -156,7 +157,7 @@ const HAIR = 1048576 // bytes per MB
 const fmtDuration = function (ms) {
   if (ms < 1000) return ms + 'ms'
   const s = ms / 1000
-  if (s < 60) return Math.round(s * 10) / 10 + 's'
+  if (s < 60) return (Math.round(s * 10) / 10 )+ 's'
   const m = Math.floor(s / 60)
   if (m < 60) return `${m}m ${Math.round(s % 60)}s`
   const h = Math.floor(m / 60)
@@ -166,15 +167,19 @@ const fmtDuration = function (ms) {
 // 512 MB / 1.4 GB
 const fmtSize = function (bytes) {
   const mb = bytes / HAIR
-  if (mb >= 1024) return Math.round(mb / 102.4) / 10 + ' GB'
+  if (mb >= 1024) return (Math.round(mb / 102.4) / 10) + ' GB'
   return Math.round(mb) + ' MB'
 }
 
 // ----- pre-run setup sheet -----
 
 const onOff = (b) => (b ? green('included') : grey('excluded'))
-const nsLabel = (ns) =>
-  ns === null || ns === undefined ? 'all' : ns === 0 ? '0  ' + dim('(articles)') : String(ns)
+const nsLabel = (ns) => {
+  if (ns === null || ns === undefined) return 'all'
+  if (ns === 0) return '0  ' + dim('(articles)')
+  return String(ns)
+}
+
 
 // a table of the run's configuration, and the memory it should stay within
 const preRun = function (info) {

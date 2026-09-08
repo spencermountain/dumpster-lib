@@ -35,6 +35,9 @@ importers:
       wtf-plugin-markdown:
         specifier: 1.0.1
         version: 1.0.1(wtf_wikipedia@10.4.2)
+      wtf-plugin-nsfw:
+        specifier: ^1.0.0
+        version: 1.0.0(wtf_wikipedia@10.4.2)
       wtf-plugin-summary:
         specifier: 1.0.0
         version: 1.0.0(wtf_wikipedia@10.4.2)
@@ -220,6 +223,11 @@ packages:
     peerDependencies:
       wtf_wikipedia: '>=9.0.0'
 
+  wtf-plugin-nsfw@1.0.0:
+    resolution: {integrity: sha512-4tNeWLd7ieE2Fc3uTrHhuF9qiPb7k/aOT53+Obr48FrQ3PdADB7EMGDelFll3zdwBPisGupSYUuhSgm/pWe/dQ==}
+    peerDependencies:
+      wtf_wikipedia: ^10.0.0
+
   wtf-plugin-summary@1.0.0:
     resolution: {integrity: sha512-R8VtfZ2Aup/vmhAOXfNYyU17cSxqSghTNA6O6ffk5S0v7pow9JJSIshV0rJQVB2ETiyyJJ/vKlbdCEn+HStXbQ==}
     peerDependencies:
@@ -393,6 +401,10 @@ snapshots:
       wtf_wikipedia: 10.4.2
 
   wtf-plugin-markdown@1.0.1(wtf_wikipedia@10.4.2):
+    dependencies:
+      wtf_wikipedia: 10.4.2
+
+  wtf-plugin-nsfw@1.0.0(wtf_wikipedia@10.4.2):
     dependencies:
       wtf_wikipedia: 10.4.2
 
