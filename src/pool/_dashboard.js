@@ -105,7 +105,7 @@ const render = function (pool) {
   const errors = pool.workers.reduce((n, w) => n + (pool.status[w.index]?.errors || 0), 0)
   let out = table.toString()
   out += '\n' + magenta(' overall  ') + bar(overall, 30) + ' ' + pct(overall)
-  let footer = `   queue ${pool.queue.length}/${pool.queueLimit}  parked ${pool.parked.length}  rss ${rss}mb`
+  let footer = `\n   queue ${pool.queue.length}/${pool.queueLimit},  ${pool.parked.length} parked,  ${rss}mb`
   out += '\n' + dim(footer) + (errors > 0 ? red(`  errors ${num(errors)}`) : '')
   return out
 }
@@ -219,7 +219,6 @@ const report = function (stats) {
   const avgBatch = stats.batches > 0 ? Math.round(stats.written / stats.batches) : 0
 
   const t = new Table({ style: tableStyle(), chars: tableChars(), colAligns: ['left', 'right'] })
-  const section = (label) => t.push([{ colSpan: 2, content: magenta(label), hAlign: 'left' }])
   const withPct = (n, total, color) => color(num(n)) + '  ' + dim('(' + pctOf(n, total) + ')')
 
   // outcomes
@@ -252,7 +251,6 @@ const report = function (stats) {
   }
 
   // performance
-  section('performance')
   t.push(['duration', fmtDuration(stats.took)])
   t.push(['data read', fmtSize(stats.bytes || 0) + (mbPerSec ? '  ' + dim(mbPerSec + ' MB/s') : '')])
   t.push(['throughput', num(perSec(all)) + ' pages/s'])
@@ -264,7 +262,7 @@ const report = function (stats) {
   t.push(['peak memory', fmtSize(stats.maxRss || 0)])
 
   const done = stats.errors > 0 ? yellow('done, with errors') : green('done')
-  console.log('\n' + magenta(' Results') + '  ' + done)
+  console.log('\n\n\n\n' + magenta(' Results') + '  ' + done)
   console.log(t.toString())
 }
 

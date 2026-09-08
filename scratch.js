@@ -1,6 +1,8 @@
 import dumpster from './src/index.js'
+import { grey, dim } from './src/lib/colors.js'
+import logUpdate from 'log-update'
 
-console.log('start')
+console.log(dim('warming up..'))
 const pool = dumpster({
   project: 'wikipedia',
   lang: 'sw',
@@ -11,5 +13,6 @@ const pool = dumpster({
 pool.on('batch', (pages) => {
   // your writer goes here
 })
-const stats = await pool.done
-console.log('end', stats)
+await pool.done
+
+// console.log(stats)
