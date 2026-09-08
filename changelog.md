@@ -3,7 +3,7 @@
 - **[new]** - backpressure: workers pause while the writer catches up, memory stays bounded
 - **[new]** - `batch` and `end` listeners may return a promise, which is awaited
 - **[new]** - `pool.done` promise, resolves with run stats
-- **[new]** - `highWater` option, heartbeat shows queue depth, parked workers and memory
+- **[new]** - `queueLimit` option, heartbeat shows queue depth, parked workers and memory
 - **[change]** - replaced sunday-driver with a pull-based reader. its pause did not hold for async consumers, and dropped pages
 - **[fix]** - workers split the file on exact `<page>` boundaries - no more mangled pages at the seams
 - **[new]** - `md` format includes `templates`

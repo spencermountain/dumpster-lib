@@ -28,7 +28,7 @@ pool.on('end', (stats) => {
 
 ### Backpressure
 
-the workers will always out-run a slow writer, so the pool paces them: each worker parses `batchPageCount` pages, hands them over, and waits until the pool has room for more. memory stays bounded at about `(highWater + workers)` batches, no matter how slow the writer is.
+the workers will always out-run a slow writer, so the pool paces them: each worker parses `batchPageCount` pages, hands them over, and waits until the pool has room for more. memory stays bounded at about `(queueLimit + workers)` batches, no matter how slow the writer is.
 
 a `batch` listener can be sync or async. **if it starts async work, return the promise** - the pool waits for it before handing over the next batch:
 
@@ -62,7 +62,7 @@ const stats = await pool.done
 - `format` - shape of each page: `text`, `sm` (type, summary, categories, infobox), `md` (sm + templates, links, intro), `lg`, `xl`, `html`, `markdown`, `json` (default)
 - `batchPageCount` - pages per batch (default 100)
 - `workers` - parsing threads (default: cpu count − 1, leaving a core for the main thread and your writer)
-- `highWater` - batches the main thread holds before pausing the workers (default: one per worker)
+- `queueLimit` - batches the main thread holds before pausing the workers (default: one per worker)
 - `namespace` - which namespace to keep (default 0. `null` for all)
 - `redirects` - keep redirect pages (default false)
 - `disambiguation` - keep disambiguation pages (default true)

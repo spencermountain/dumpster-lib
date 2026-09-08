@@ -1,6 +1,4 @@
-import { green, magenta, cyan, grey, dim } from '../lib/colors.js'
-
-// calculate sums from each worker
+// calculate sums from each worker's status
 const calc = function (arr) {
   let sums = {
     processed: 0,
@@ -27,31 +25,4 @@ const calc = function (arr) {
   return sums
 }
 
-const percent = (sum, total) => {
-  let p = total === 0 ? 0 : parseInt((sum / total) * 100, 10)
-  return grey(' (' + p + '%)')
-}
-const num = (n) => {
-  return n.toLocaleString().padStart(8)
-}
-const round = (n) => Math.round(n * 10) / 10
-
-const printSummary = function (res) {
-  let all = res.processed
-  let msg = `\n\n\n${dim('-----------')}\n`
-  msg += '\nProcessed:'.padEnd(16) + magenta(num(all)) + ' pages'
-  msg += '\nWrote:'.padEnd(16) + green(num(res.written)) + ' ' + percent(res.written, all)
-  msg += '\nSkipped:'.padEnd(16) + cyan(num(res.skipped)) + ' ' + percent(res.skipped, all)
-  msg += '\n     - namespace:'.padEnd(20) + cyan(num(res.skipped_namespace))
-  msg += '\n     - redirects:'.padEnd(20) + cyan(num(res.skipped_redirect))
-  msg += '\n     - disambig:'.padEnd(20) + cyan(num(res.skipped_disambig))
-  msg += '\n     - empty:'.padEnd(20) + cyan(num(res.skipped_empty))
-  if (res.errors > 0) {
-    msg += '\nErrors:'.padEnd(16) + cyan(num(res.errors))
-  }
-  msg += '\n\n ' + dim(`${res.batches.toLocaleString()} batches, queue peaked at ${res.maxQueue}, workers paused ${res.parked.toLocaleString()} times`)
-  let mins = res.took / 1000 / 60
-  msg += '\n ' + dim('took ' + round(mins) + ' mins')
-  console.log(msg)
-}
-export { calc, printSummary }
+export { calc }

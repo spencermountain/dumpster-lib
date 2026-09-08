@@ -5,8 +5,8 @@ import { Worker } from 'node:worker_threads'
 import { fileURLToPath } from 'node:url'
 import { checkOptions } from './_prep.js'
 import partition from './_partition.js'
-import { calc, printSummary } from './_summary.js'
-import { blue, yellow, magenta, grey } from '../lib/colors.js'
+import { calc } from './_summary.js'
+import * as dashboard from './_dashboard.js'
 
 const workerFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '../worker/index.js')
 
@@ -20,7 +20,7 @@ const workerFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '../w
 //   → 'resume' is sent right away if the queue is short,
 //     or held until the writer catches up, if it's backed-up.
 //
-// memory stays bounded at ~(highWater + workers) batches no matter how slow the
+// memory stays bounded at ~(queueLimit + workers) batches no matter how slow the
 // writer is: every worker is paused, waiting for 'resume', before it parses more.
 class Pool extends EventEmitter {
   constructor(opts) {
@@ -29,9 +29,10 @@ class Pool extends EventEmitter {
     this.workers = []
     this.queue = [] // batches waiting for the writer
     this.parked = [] // paused workers we have not yet told to resume
+    this.errorTally = new Map() // error message -> { message, count, title } for the report
     this.status = {} // the latest status object from each worker, by index
-    this.stats = { batches: 0, written: 0, maxQueue: 0, parked: 0 }
-    this.highWater = opts.highWater
+    this.stats = { batches: 0, written: 0, maxQueue: 0, parked: 0, maxRss: 0 }
+    this.queueLimit = opts.queueLimit
     this.error = null
     this.closing = false
     this.wakeWriter = null
@@ -50,14 +51,12 @@ class Pool extends EventEmitter {
     const { file, workers } = this.opts
     checkOptions(this.opts)
     const ranges = partition(file, workers)
-    if (!this.highWater) {
-      this.highWater = Math.max(1, ranges.length)
+    if (!this.queueLimit) {
+      this.queueLimit = Math.max(1, ranges.length)
     }
-    const mb = Math.round(fs.statSync(file).size / 1048576) + 'mb'
-    console.log(`\n\nstarting ${blue(ranges.length)} workers on the ${yellow(mb)} file`)
+    this.fileSize = fs.statSync(file).size
+    dashboard.preRun({ file, fileSize: this.fileSize, workers: ranges.length, queueLimit: this.queueLimit, opts: this.opts })
     ranges.forEach((range, i) => this.spawn(i, range))
-    const header = this.workers.map((_, i) => ` #${i + 1}`.padStart(8)).join('   ')
-    console.log('\n' + magenta(header))
     if (this.opts.heartbeat > 0) {
       this.heartbeat = setInterval(() => this.beat(), this.opts.heartbeat)
     }
@@ -82,6 +81,7 @@ class Pool extends EventEmitter {
     const worker = new Worker(workerFile, { workerData })
     worker.index = index
     worker.finished = false
+    worker.rangeSize = range.end - range.start + 1 // for the progress bar (end is inclusive)
     worker.on('message', (msg) => this.onMessage(worker, msg))
     worker.on('error', (err) => this.abort(err))
     worker.on('exit', (code) => {
@@ -103,7 +103,7 @@ class Pool extends EventEmitter {
       this.queue.push(msg.pages)
       this.stats.maxQueue = Math.max(this.stats.maxQueue, this.queue.length)
       this.wake()
-      if (this.queue.length <= this.highWater) {
+      if (this.queue.length <= this.queueLimit) {
         worker.postMessage({ type: 'resume' })
       } else {
         this.stats.parked += 1
@@ -112,6 +112,8 @@ class Pool extends EventEmitter {
     } else if (msg.type === 'done') {
       worker.finished = true
       this.wake()
+    } else if (msg.type === 'warning') {
+      this.tallyWarning(msg)
     } else if (msg.type === 'error') {
       this.abort(new Error(msg.error))
     }
@@ -145,7 +147,7 @@ class Pool extends EventEmitter {
       }
       this.stats.batches += 1
       this.stats.written += pages.length
-      if (this.queue.length < this.highWater) {
+      if (this.queue.length < this.queueLimit) {
         this.resumeParked()
       }
       // let worker messages and the heartbeat interleave, even with a sync writer
@@ -164,6 +166,10 @@ class Pool extends EventEmitter {
 
   async finish() {
     clearInterval(this.heartbeat)
+    if (this.opts.heartbeat > 0) {
+      this.beat() // one last frame, so every worker shows done / 100%
+    }
+    dashboard.stop()
     const stats = this.summary()
     // 'end' listeners are awaited too - flush and close your db here
     try {
@@ -172,7 +178,7 @@ class Pool extends EventEmitter {
       return this.abort(err)
     }
     await this.stopWorkers()
-    printSummary(stats)
+    dashboard.report(stats)
     this.resolveDone(stats)
   }
 
@@ -182,6 +188,7 @@ class Pool extends EventEmitter {
     }
     this.error = err
     clearInterval(this.heartbeat)
+    dashboard.stop()
     this.wake()
     await this.stopWorkers()
     if (this.listenerCount('error') > 0) {
@@ -195,24 +202,32 @@ class Pool extends EventEmitter {
     return Promise.all(this.workers.map((w) => w.terminate()))
   }
 
+  // tally a worker's per-page parse warning, by its first error line
+  tallyWarning(msg) {
+    const message = String(msg.error).split('\n')[0].slice(0, 120)
+    const hit = this.errorTally.get(message) || { message, count: 0, title: msg.title }
+    hit.count += 1
+    this.errorTally.set(message, hit)
+    dashboard.warn(this, `worker #${msg.index + 1} couldn't process '${msg.title}': ${message}`)
+  }
+
   summary() {
     const res = calc(Object.values(this.status))
+    const bytes = Object.values(this.status).reduce((n, s) => n + (s.bytes || 0), 0)
     return Object.assign(res, this.stats, {
       workers: this.workers.length,
       took: Date.now() - this.startedAt,
+      bytes,
+      fileSize: this.fileSize || 0,
+      maxRss: Math.max(this.stats.maxRss, process.memoryUsage().rss),
+      errorTypes: [...this.errorTally.values()].sort((a, b) => b.count - a.count),
     })
   }
 
-  // heartbeat status logger
+  // heartbeat status logger - a live table on a TTY, plain rows otherwise
   beat() {
-    const row = this.workers
-      .map((w) => {
-        const s = this.status[w.index]
-        return (s ? s.written.toLocaleString() : '???').padStart(8)
-      })
-      .join('   ')
-    const rss = Math.round(process.memoryUsage().rss / 1048576)
-    console.log(grey(row) + grey(`   │ queue ${this.queue.length}  parked ${this.parked.length}  rss ${rss}mb`))
+    this.stats.maxRss = Math.max(this.stats.maxRss, process.memoryUsage().rss)
+    dashboard.beat(this)
   }
 }
 

@@ -1,14 +1,33 @@
-const green = str => '\x1b[32m' + str + '\x1b[0m'
-const red = str => '\x1b[31m' + str + '\x1b[0m'
-const blue = str => '\x1b[34m' + str + '\x1b[0m'
-const magenta = str => '\x1b[35m' + str + '\x1b[0m'
-const cyan = str => '\x1b[36m' + str + '\x1b[0m'
-const grey = str => '\x1b[37m' + str + '\x1b[0m'
-const yellow = str => '\x1b[33m' + str + '\x1b[0m'
-const black = str => '\x1b[30m' + str + '\x1b[0m'
-const dim = str => '\x1b[2m' + str + '\x1b[0m'
+// whether to emit ANSI color, honoring the usual standards:
+//   FORCE_COLOR wins if set   (chalk convention: '0'/'false' = off, anything else = on)
+//   NO_COLOR disables if set   (https://no-color.org - present, regardless of value)
+//   otherwise, only when stdout is a TTY
+const enabled = function () {
+  const { FORCE_COLOR, NO_COLOR } = process.env
+  if (FORCE_COLOR !== undefined) {
+    return !(FORCE_COLOR === '0' || FORCE_COLOR === 'false')
+  }
+  if (NO_COLOR !== undefined) {
+    return false
+  }
+  return Boolean(process.stdout.isTTY)
+}
+
+// wrap in an ANSI code, or pass the string through untouched when color is off
+const paint = (code) => (str) => (enabled() ? '\x1b[' + code + 'm' + str + '\x1b[0m' : String(str))
+
+const green = paint(32)
+const red = paint(31)
+const blue = paint(34)
+const magenta = paint(35)
+const cyan = paint(36)
+const grey = paint(37)
+const yellow = paint(33)
+const black = paint(30)
+const dim = paint(2)
 
 export {
+  enabled,
   green,
   red,
   blue,

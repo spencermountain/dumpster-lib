@@ -9,7 +9,7 @@ const pool = dumpster({
   file: '/Volumes/4TB/wikipedia/swwiki-latest-pages-articles.xml',
 })
 pool.on('batch', (pages) => {
-  console.log('batch of', pages.length)
+  // your writer goes here
 })
 const stats = await pool.done
 console.log('end', stats)

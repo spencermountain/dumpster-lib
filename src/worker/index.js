@@ -4,7 +4,6 @@ import pages from './01-reader.js'
 import parseXml from './02-xml.js'
 import parsePage from './03-parse.js'
 import wantThisPage from './04-filter.js'
-import { red } from '../lib/colors.js'
 
 // each worker reads one byte-range of the dump:
 //   read '<page>' blocks → wtf_wikipedia → post a batch every `batchPageCount` pages.
@@ -26,6 +25,7 @@ const status = {
   skipped_empty: 0,
   errors: 0,
   written: 0,
+  bytes: 0, // bytes of page-xml read so far - for progress against our range size
 }
 
 // post a batch, then pause until the pool tells us to resume
@@ -73,7 +73,8 @@ const eachPage = function (xml) {
     }
   } catch (e) {
     status.errors += 1
-    console.log(red(`\nWorker ${index} couldn't process '${title}':\n got error ${e}`))
+    // hand the warning to the pool - a console.log from here would punch into the live table
+    parentPort.postMessage({ type: 'warning', index, title, error: String(e) })
   }
   return null
 }
@@ -82,6 +83,7 @@ const run = async function () {
   let batch = []
   try {
     for await (let xml of pages({ file, start, end })) {
+      status.bytes += Buffer.byteLength(xml) // ~proportional to our byte-range; enough for a progress bar
       const page = eachPage(xml)
       if (page !== null) {
         batch.push(page)

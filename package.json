@@ -20,7 +20,9 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "cli-table3": "^0.6.5",
     "html-entities": "2.6.0",
+    "log-update": "^8.0.0",
     "wtf-plugin-classify": "2.1.0",
     "wtf-plugin-html": "1.0.0",
     "wtf-plugin-i18n": "1.0.2",
