@@ -1,5 +1,8 @@
 
 ### 0.1.0 [Sep 2026]
+- **[new]** - shared CLI: `dumpster-lib/cli` runner + a default `dumpster` command; writer plugins wire their own `npx` command through it. commander flags, guided `@clack/prompts` setup for missing options
+- **[new]** - setup + report tables, live in-place heartbeat table (cli-table3 + log-update), honoring `NO_COLOR` / `NO_UNICODE`
+- **[change]** - `engines.node` is now `>=20` (CLI dependencies)
 - **[new]** - backpressure: workers pause while the writer catches up, memory stays bounded
 - **[new]** - `batch` and `end` listeners may return a promise, which is awaited
 - **[new]** - `pool.done` promise, resolves with run stats

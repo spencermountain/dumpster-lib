@@ -72,6 +72,43 @@ the heartbeat prints each worker's page count, then `queue` (batches waiting for
 
 MIT
 
+### CLI
+
+every dumpster tool shares one command-line interface. the lib's own default command parses a dump and reports what's in it, without writing anything - handy for inspecting or benchmarking a file:
+
+```
+npx dumpster ./swwiki-latest-pages-articles.xml --format sm
+```
+
+the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--redirects`, `--no-disambiguation`, `--heartbeat`). run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker table, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set).
+
+### CLI for a writer plugin
+
+a writer library (dumpster-disk, dumpster-duck, …) gives its users the same CLI by calling the shared runner with its own writer and any extra options:
+
+```js
+#!/usr/bin/env node
+import run from 'dumpster-lib/cli'
+
+run({
+  name: 'dumpster-disk',
+  description: 'parse a wikipedia dump to files on disk',
+  params: [
+    { name: 'out', flags: '-o, --out <dir>', desc: 'output directory', type: 'string', required: true, guided: true },
+  ],
+  writer: (pool, opts) => {
+    pool.on('batch', async (pages) => {
+      // write pages to opts.out
+    })
+    pool.on('end', async () => {
+      // flush and close
+    })
+  },
+})
+```
+
+point the package's `bin` at that file, and `npx dumpster-disk <file> --out ./pages` inherits every core option, the guided prompts, the shared validation, and the setup/heartbeat/report UI - the plugin only describes its own extra options and its writer. a `param` has: `name` (the option key), `flags` (commander spec), `desc`, `type` (`string`/`number`/`select`/`boolean`/`path`), and optionally `required`, `guided` (include in the guided setup), `choices` (for `select`), `parse` (coercion) and `validate`.
+
 ### Testing a writer
 
 `dumpster-lib/fixture` builds a tiny, realistic dump in a temp directory, for the tests of a writer library:
