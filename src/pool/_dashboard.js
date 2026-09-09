@@ -204,6 +204,7 @@ const preRun = function (info) {
   t.push(['redirects', onOff(!opts.skip_redirect)])
   t.push(['disambiguation', onOff(!opts.skip_disambig)])
   t.push(['NSFW', nsfwLabel(opts.skip_nsfw)])
+  t.push(['stubs', onOff(!opts.skip_stub)])
   t.push(['batch size', num(opts.batchPageCount) + ' pages'])
   t.push(['queue limit', num(queueLimit) + ' batches'])
   t.push(['heartbeat', opts.heartbeat > 0 ? 'every ' + fmtDuration(opts.heartbeat) : grey('off')])
@@ -241,6 +242,7 @@ const report = function (stats) {
     ['redirects', stats.skipped_redirect],
     ['disambig', stats.skipped_disambig],
     ['NSFW', stats.skipped_nsfw],
+    ['stubs', stats.skipped_stub],
     ['empty', stats.skipped_empty],
   ]
   reasons.forEach(([label, n]) => {

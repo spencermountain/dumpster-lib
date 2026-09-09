@@ -23,7 +23,7 @@ const validSkipNsfwOption = function (option) {
 
 // throw early on bad options. the pool turns this into an 'error' event and a rejected `done`
 const checkOptions = function (opts) {
-  const { file, format, skip_redirect, skip_disambig, skip_nsfw } = opts
+  const { file, format, skip_redirect, skip_disambig, skip_nsfw, skip_stub } = opts
   const renamed = Object.keys(renamedFilters).find((name) => Object.hasOwn(opts, name))
   if (renamed) {
     throw new Error(`'${renamed}' has been renamed to '${renamedFilters[renamed]}' with inverted boolean semantics`)
@@ -45,6 +45,9 @@ const checkOptions = function (opts) {
   }
   if (!validSkipNsfwOption(skip_nsfw)) {
     throw new Error(`'skip_nsfw' must be true, false, or an object mapping reasons to booleans`)
+  }
+  if (typeof skip_stub !== 'boolean') {
+    throw new Error(`'skip_stub' must be true or false`)
   }
 }
 export { checkOptions, formats }

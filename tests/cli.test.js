@@ -14,10 +14,11 @@ const parse = function (args) {
 }
 
 test('CLI skip flags map to the snake-case library options', () => {
-  const opts = parse(['--no-skip-redirect', '--skip-disambig', '--skip-nsfw'])
+  const opts = parse(['--no-skip-redirect', '--skip-disambig', '--skip-nsfw', '--skip-stub'])
   assert.deepEqual(opts, {
     skip_redirect: false,
     skip_disambig: true,
-    skip_nsfw: true
+    skip_nsfw: true,
+    skip_stub: true
   })
 })

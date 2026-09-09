@@ -66,6 +66,16 @@ const baseParams = [
     type: 'boolean',
     guided: true,
   },
+  {
+    name: 'skip_stub',
+    cliName: 'skipStub',
+    flags: '--skip-stub',
+    negativeFlags: '--no-skip-stub',
+    desc: 'skip stub pages',
+    negativeDesc: 'include stub pages',
+    type: 'boolean',
+    guided: true,
+  },
 
   // advanced - flags only, not part of the guided flow
   { name: 'project', flags: '--project <name>', desc: 'wiki project (e.g. wikipedia)', type: 'string' },

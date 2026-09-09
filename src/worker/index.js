@@ -23,6 +23,7 @@ const status = {
   skipped_redirect: 0,
   skipped_disambig: 0,
   skipped_nsfw: 0,
+  skipped_stub: 0,
   skipped_empty: 0,
   errors: 0,
   written: 0,
@@ -71,6 +72,8 @@ const eachPage = function (xml) {
       status.skipped_disambig += 1
     } else if (want === 'nsfw') {
       status.skipped_nsfw += 1
+    } else if (want === 'stub') {
+      status.skipped_stub += 1
     } else if (want === 'empty') {
       status.skipped_empty += 1
     }

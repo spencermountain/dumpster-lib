@@ -58,6 +58,7 @@ const parsePage = function (meta, fmt) {
     encoded_title: encodeTitle(title),
     isRedirect: doc.isRedirect(),
     isDisambig: doc.isDisambig(),
+    isStub: doc.isStub(),
     isNsfw: !nsfw.safe_for_work,
     nsfwReason: nsfw.reason,
     revisionID: meta.revisionID,

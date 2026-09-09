@@ -74,6 +74,25 @@ test('honours skip_disambig option', async () => {
   assert.equal(stats.skipped_disambig, fixture.expect.disambig)
 })
 
+test('flags stubs and honours skip_stub option', async () => {
+  const included = dumpster({ ...base, workers: 2 })
+  let stubs = 0
+  included.on('batch', (pages) => {
+    stubs += pages.filter((page) => page.isStub).length
+  })
+  const includedStats = await included.done
+  assert.equal(stubs, fixture.expect.stubs)
+  assert.equal(includedStats.skipped_stub, 0)
+
+  const filtered = dumpster({ ...base, workers: 2, skip_stub: true })
+  filtered.on('batch', (pages) => {
+    assert.equal(pages.some((page) => page.isStub), false)
+  })
+  const filteredStats = await filtered.done
+  assert.equal(filteredStats.skipped_stub, fixture.expect.stubs)
+  assert.equal(filteredStats.written, fixture.expect.articles.length - fixture.expect.stubs)
+})
+
 test('flags NSFW pages and optionally filters them', async () => {
   const included = dumpster({ ...base, workers: 2 })
   let nsfw = 0
@@ -169,6 +188,11 @@ test('an unknown format rejects done', async () => {
 test('an invalid NSFW reason map rejects done', async () => {
   const pool = dumpster({ ...base, skip_nsfw: { Weapons: 'yes' } })
   await assert.rejects(pool.done, /'skip_nsfw' must be true, false, or an object/)
+})
+
+test('an invalid skip_stub option rejects done', async () => {
+  const pool = dumpster({ ...base, skip_stub: 'yes' })
+  await assert.rejects(pool.done, /'skip_stub' must be true or false/)
 })
 
 test('renamed filter options fail instead of being silently ignored', async () => {

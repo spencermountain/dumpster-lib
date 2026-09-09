@@ -42,6 +42,7 @@ const makeFixture = function (count = 300) {
     redirects: 0,
     otherNs: 0,
     disambig: 0,
+    stubs: 0,
     nsfw: 0,
     nsfwReasons: { Sexuality: 0, Weapons: 0, 'Drug-use': 0 }
   }
@@ -73,6 +74,10 @@ const makeFixture = function (count = 300) {
       if (id % 47 === 0) {
         text += '\n{{disambiguation}}'
         expect.disambig += 1
+      }
+      if (id % 53 === 0) {
+        text += '\n{{stub}}'
+        expect.stubs += 1
       }
       pages.push({ id, title, ns: 0, text })
       expect.articles.push(title)

@@ -74,6 +74,7 @@ class Pool extends EventEmitter {
       skip_redirect: o.skip_redirect,
       skip_disambig: o.skip_disambig,
       skip_nsfw: o.skip_nsfw,
+      skip_stub: o.skip_stub,
       lang: o.lang,
       project: o.project,
       format: o.format,

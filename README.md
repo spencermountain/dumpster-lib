@@ -67,6 +67,7 @@ const stats = await pool.done
 - `skip_redirect` - skip redirect pages (default true)
 - `skip_disambig` - skip disambiguation pages (default false)
 - `skip_nsfw` - skip pages flagged by `wtf-plugin-nsfw` (default false). set true to filter all flagged pages, or pass a reason map such as `{ Weapons: false, 'Drug-use': true }`. omitted reasons are not skipped.
+- `skip_stub` - skip pages identified by `wtf_wikipedia`'s `isStub()` method (default false)
 - `heartbeat` - ms between status lines (default 5000. `0` to disable)
 
 flagged pages include `isNsfw: true` and an `nsfwReason`. the plugin's current reasons are `Sexuality`, `Drug-use`, `Weapons`, `Violence`, `Profanity`, and `Obscenity`:
@@ -95,7 +96,7 @@ every dumpster tool shares one command-line interface. the lib's own default com
 npx dumpster ./swwiki-latest-pages-articles.xml --format sm
 ```
 
-the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--skip-redirect`, `--skip-disambig`, `--skip-nsfw`, `--heartbeat`). each skip flag also has a `--no-skip-*` form. run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker table, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set).
+the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--skip-redirect`, `--skip-disambig`, `--skip-nsfw`, `--skip-stub`, `--heartbeat`). each skip flag also has a `--no-skip-*` form. run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker table, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set).
 
 ### CLI for a writer plugin
 

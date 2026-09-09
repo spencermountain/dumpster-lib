@@ -12,6 +12,8 @@ const filterPage = function (page, opts) {
     return 'disambig'
   } else if (page.isNsfw && skipNsfw(page.nsfwReason, opts.skip_nsfw)) {
     return 'nsfw'
+  } else if (page.isStub && opts.skip_stub) {
+    return 'stub'
   } else if (page.isEmpty) {
     return 'empty'
   }

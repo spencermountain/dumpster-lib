@@ -8,6 +8,7 @@ export default {
   skip_redirect: true,
   skip_disambig: false,
   skip_nsfw: false,
+  skip_stub: false,
   // how many worker threads parse the file.
   // one core is left for the main thread, which deserializes batches and runs your writer
   workers: Math.max(1, cpuCount - 1),
