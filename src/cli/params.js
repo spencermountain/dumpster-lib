@@ -7,10 +7,12 @@ const fileExists = (v) => (v && fs.existsSync(v) ? undefined : `no file found at
 // and the clack prompts - so a param is described in exactly one place.
 //
 // each param:
-//   name     - the dumpster() option key (matches the flag's camelCase)
+//   name     - the dumpster() option key
 //   flags    - commander flag spec
 //   desc     - help text / prompt message
 //   type     - 'path' | 'string' | 'number' | 'select' | 'boolean'
+//   cliName  - commander's camelCase option key, when it differs from name
+//   negativeFlags / negativeDesc - optional explicit false form for a boolean
 //   choices  - for 'select'
 //   required - must be present; prompted for when missing
 //   guided   - included in the full guided setup (bare invocation, or --interactive)
@@ -34,8 +36,36 @@ const baseParams = [
     guided: true,
   },
   { name: 'lang', flags: '--lang <code>', desc: 'wiki language code (e.g. en, sw)', type: 'string', guided: true },
-  { name: 'redirects', flags: '--redirects', desc: 'keep redirect pages', type: 'boolean', guided: true },
-  { name: 'disambiguation', flags: '--no-disambiguation', desc: 'keep disambiguation pages', type: 'boolean', guided: true },
+  {
+    name: 'skip_redirect',
+    cliName: 'skipRedirect',
+    flags: '--skip-redirect',
+    negativeFlags: '--no-skip-redirect',
+    desc: 'skip redirect pages',
+    negativeDesc: 'include redirect pages',
+    type: 'boolean',
+    guided: true,
+  },
+  {
+    name: 'skip_disambig',
+    cliName: 'skipDisambig',
+    flags: '--skip-disambig',
+    negativeFlags: '--no-skip-disambig',
+    desc: 'skip disambiguation pages',
+    negativeDesc: 'include disambiguation pages',
+    type: 'boolean',
+    guided: true,
+  },
+  {
+    name: 'skip_nsfw',
+    cliName: 'skipNsfw',
+    flags: '--skip-nsfw',
+    negativeFlags: '--no-skip-nsfw',
+    desc: 'skip NSFW pages',
+    negativeDesc: 'include NSFW pages',
+    type: 'boolean',
+    guided: true,
+  },
 
   // advanced - flags only, not part of the guided flow
   { name: 'project', flags: '--project <name>', desc: 'wiki project (e.g. wikipedia)', type: 'string' },
@@ -62,6 +92,9 @@ const applyParams = function (program, params) {
     } else {
       program.option(p.flags, p.desc)
     }
+    if (p.negativeFlags) {
+      program.option(p.negativeFlags, p.negativeDesc)
+    }
   }
 }
 
@@ -71,8 +104,9 @@ const passedParams = function (program, params) {
   const all = program.opts()
   const out = {}
   for (const p of params) {
-    if (program.getOptionValueSource(p.name) === 'cli') {
-      out[p.name] = all[p.name]
+    const cliName = p.cliName || p.name
+    if (program.getOptionValueSource(cliName) === 'cli') {
+      out[p.name] = all[cliName]
     }
   }
   return out

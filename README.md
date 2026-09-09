@@ -64,9 +64,24 @@ const stats = await pool.done
 - `workers` - parsing threads (default: cpu count − 1, leaving a core for the main thread and your writer)
 - `queueLimit` - batches the main thread holds before pausing the workers (default: one per worker)
 - `namespace` - which namespace to keep (default 0. `null` for all)
-- `redirects` - keep redirect pages (default false)
-- `disambiguation` - keep disambiguation pages (default true)
+- `skip_redirect` - skip redirect pages (default true)
+- `skip_disambig` - skip disambiguation pages (default false)
+- `skip_nsfw` - skip pages flagged by `wtf-plugin-nsfw` (default false). set true to filter all flagged pages, or pass a reason map such as `{ Weapons: false, 'Drug-use': true }`. omitted reasons are not skipped.
 - `heartbeat` - ms between status lines (default 5000. `0` to disable)
+
+flagged pages include `isNsfw: true` and an `nsfwReason`. the plugin's current reasons are `Sexuality`, `Drug-use`, `Weapons`, `Violence`, `Profanity`, and `Obscenity`:
+
+```js
+const pool = dumpster({
+  file: './enwiki-latest-pages-articles.xml',
+  skip_nsfw: {
+    Weapons: false,
+    'Drug-use': true
+  }
+})
+```
+
+this keeps weapon-related pages and filters drug-related pages. omitted reasons are kept.
 
 the heartbeat prints each worker's page count, then `queue` (batches waiting for your writer), `parked` (workers paused waiting for room) and memory. if `parked` sits near the worker count, the writer is the bottleneck - try fewer workers, or bigger batches.
 
@@ -80,7 +95,7 @@ every dumpster tool shares one command-line interface. the lib's own default com
 npx dumpster ./swwiki-latest-pages-articles.xml --format sm
 ```
 
-the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--redirects`, `--no-disambiguation`, `--heartbeat`). run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker table, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set).
+the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--skip-redirect`, `--skip-disambig`, `--skip-nsfw`, `--heartbeat`). each skip flag also has a `--no-skip-*` form. run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker table, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set).
 
 ### CLI for a writer plugin
 

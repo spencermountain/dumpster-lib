@@ -34,10 +34,17 @@ const header = `<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/" ver
 const para = "'''Tinytown''' is a town in [[Ontario]], with a {{convert|10|km}} main street &amp; a &lt;ref&gt;citation&lt;/ref&gt;. "
 
 // `count` pages: mostly small articles, some big ones (so worker seams land mid-page),
-// every 10th a redirect, every 25th a category page
+// every 10th a redirect, every 25th a category page, and several NSFW reason fixtures
 const makeFixture = function (count = 300) {
   const pages = []
-  const expect = { articles: [], redirects: 0, otherNs: 0 }
+  const expect = {
+    articles: [],
+    redirects: 0,
+    otherNs: 0,
+    disambig: 0,
+    nsfw: 0,
+    nsfwReasons: { Sexuality: 0, Weapons: 0, 'Drug-use': 0 }
+  }
   for (let id = 1; id <= count; id += 1) {
     const title = `Page ${id}`
     if (id % 10 === 0) {
@@ -50,6 +57,23 @@ const makeFixture = function (count = 300) {
       const reps = id % 40 === 1 ? 600 : 1 + (id % 5) // a few ~70kb pages
       let text = para.repeat(reps)
       text += `\n{{Tinytown data|founded=${1800 + id}|mayor=Ann}}\n\n==History==\nFounded in ${1800 + id}.\n[[Category:Towns]]`
+      if (id % 37 === 0) {
+        text += '\n[[Category:Pornography]]'
+        expect.nsfwReasons.Sexuality += 1
+      } else if (id % 41 === 0) {
+        text += '\n[[Category:Firearms]]'
+        expect.nsfwReasons.Weapons += 1
+      } else if (id % 43 === 0) {
+        text += '\n[[Category:Cannabis]]'
+        expect.nsfwReasons['Drug-use'] += 1
+      }
+      if (id % 37 === 0 || id % 41 === 0 || id % 43 === 0) {
+        expect.nsfw += 1
+      }
+      if (id % 47 === 0) {
+        text += '\n{{disambiguation}}'
+        expect.disambig += 1
+      }
       pages.push({ id, title, ns: 0, text })
       expect.articles.push(title)
     }

@@ -50,6 +50,7 @@ const parsePage = function (meta, fmt) {
   let doc = wtf(meta.wiki, meta)
   // actually process the page
   let body = toOutputFormat(doc, fmt)
+  const nsfw = doc.nsfw()
   let title = meta.title //|| doc.title()
   const result = {
     title,
@@ -57,6 +58,8 @@ const parsePage = function (meta, fmt) {
     encoded_title: encodeTitle(title),
     isRedirect: doc.isRedirect(),
     isDisambig: doc.isDisambig(),
+    isNsfw: !nsfw.safe_for_work,
+    nsfwReason: nsfw.reason,
     revisionID: meta.revisionID,
     timestamp: meta.timestamp,
     ns: meta.namespace,

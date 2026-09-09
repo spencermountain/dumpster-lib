@@ -54,8 +54,8 @@ test('a sync writer works with the same listener', async () => {
   assert.equal(n, fixture.expect.articles.length)
 })
 
-test('honours redirects and disambiguation options', async () => {
-  const pool = dumpster({ ...base, workers: 2, redirects: true })
+test('honours skip_redirect option', async () => {
+  const pool = dumpster({ ...base, workers: 2, skip_redirect: false })
   let redirects = 0
   pool.on('batch', (pages) => {
     redirects += pages.filter((p) => p.isRedirect).length
@@ -63,6 +63,50 @@ test('honours redirects and disambiguation options', async () => {
   const stats = await pool.done
   assert.equal(redirects, fixture.expect.redirects)
   assert.equal(stats.skipped_redirect, 0)
+})
+
+test('honours skip_disambig option', async () => {
+  const pool = dumpster({ ...base, workers: 2, skip_disambig: true })
+  pool.on('batch', (pages) => {
+    assert.equal(pages.some((page) => page.isDisambig), false)
+  })
+  const stats = await pool.done
+  assert.equal(stats.skipped_disambig, fixture.expect.disambig)
+})
+
+test('flags NSFW pages and optionally filters them', async () => {
+  const included = dumpster({ ...base, workers: 2 })
+  let nsfw = 0
+  included.on('batch', (pages) => {
+    nsfw += pages.filter((p) => p.isNsfw).length
+  })
+  const includedStats = await included.done
+  assert.equal(nsfw, fixture.expect.nsfw)
+  assert.equal(includedStats.skipped_nsfw, 0)
+
+  const filtered = dumpster({ ...base, workers: 2, skip_nsfw: true })
+  filtered.on('batch', (pages) => {
+    assert.equal(pages.some((p) => p.isNsfw), false)
+  })
+  const filteredStats = await filtered.done
+  assert.equal(filteredStats.skipped_nsfw, fixture.expect.nsfw)
+  assert.equal(filteredStats.written, fixture.expect.articles.length - fixture.expect.nsfw)
+})
+
+test('accepts an NSFW reason skip map', async () => {
+  const pool = dumpster({
+    ...base,
+    workers: 2,
+    skip_nsfw: { Weapons: false, 'Drug-use': true }
+  })
+  const reasons = []
+  pool.on('batch', (pages) => {
+    pages.filter((page) => page.isNsfw).forEach((page) => reasons.push(page.nsfwReason))
+  })
+  const stats = await pool.done
+  assert.deepEqual(new Set(reasons), new Set(['Sexuality', 'Weapons']))
+  assert.equal(reasons.length, fixture.expect.nsfw - fixture.expect.nsfwReasons['Drug-use'])
+  assert.equal(stats.skipped_nsfw, fixture.expect.nsfwReasons['Drug-use'])
 })
 
 test('a rejecting writer aborts the run, fires error, and rejects done', async () => {
@@ -120,4 +164,21 @@ test('a missing file rejects done, with a helpful error', async () => {
 test('an unknown format rejects done', async () => {
   const pool = dumpster({ ...base, format: 'yaml' })
   await assert.rejects(pool.done, /unknown format 'yaml'/)
+})
+
+test('an invalid NSFW reason map rejects done', async () => {
+  const pool = dumpster({ ...base, skip_nsfw: { Weapons: 'yes' } })
+  await assert.rejects(pool.done, /'skip_nsfw' must be true, false, or an object/)
+})
+
+test('renamed filter options fail instead of being silently ignored', async () => {
+  const renamed = {
+    redirects: 'skip_redirect',
+    disambiguation: 'skip_disambig',
+    nsfw: 'skip_nsfw'
+  }
+  for (const [oldName, newName] of Object.entries(renamed)) {
+    const pool = dumpster({ ...base, [oldName]: true })
+    await assert.rejects(pool.done, new RegExp(`'${oldName}' has been renamed to '${newName}'`))
+  }
 })

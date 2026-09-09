@@ -9,6 +9,7 @@ const calc = function (arr) {
     skipped_namespace: 0,
     skipped_redirect: 0,
     skipped_disambig: 0,
+    skipped_nsfw: 0,
     skipped_empty: 0
   }
   arr.forEach((o) => {
@@ -18,10 +19,15 @@ const calc = function (arr) {
     sums.skipped_namespace += o.skipped_namespace || 0
     sums.skipped_redirect += o.skipped_redirect || 0
     sums.skipped_disambig += o.skipped_disambig || 0
+    sums.skipped_nsfw += o.skipped_nsfw || 0
     sums.skipped_empty += o.skipped_empty || 0
   })
   sums.skipped =
-    sums.skipped_namespace + sums.skipped_redirect + sums.skipped_disambig + sums.skipped_empty
+    sums.skipped_namespace +
+    sums.skipped_redirect +
+    sums.skipped_disambig +
+    sums.skipped_nsfw +
+    sums.skipped_empty
   return sums
 }
 

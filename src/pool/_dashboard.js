@@ -174,6 +174,16 @@ const fmtSize = function (bytes) {
 // ----- pre-run setup sheet -----
 
 const onOff = (b) => (b ? green('included') : grey('excluded'))
+const nsfwLabel = function (skipOption) {
+  if (typeof skipOption === 'boolean') {
+    return onOff(!skipOption)
+  }
+  const skipped = Object.keys(skipOption).filter((reason) => skipOption[reason] === true)
+  if (skipped.length === 0) {
+    return onOff(true)
+  }
+  return yellow('selective') + dim(' (skipping ' + skipped.join(', ') + ')')
+}
 const nsLabel = (ns) => {
   if (ns === null || ns === undefined) return 'all'
   if (ns === 0) return '0  ' + dim('(articles)')
@@ -191,8 +201,9 @@ const preRun = function (info) {
   t.push(['workers', num(workers)])
   t.push(['format', opts.format])
   t.push(['namespace', nsLabel(opts.namespace)])
-  t.push(['redirects', onOff(opts.redirects)])
-  t.push(['disambiguation', onOff(opts.disambiguation)])
+  t.push(['redirects', onOff(!opts.skip_redirect)])
+  t.push(['disambiguation', onOff(!opts.skip_disambig)])
+  t.push(['NSFW', nsfwLabel(opts.skip_nsfw)])
   t.push(['batch size', num(opts.batchPageCount) + ' pages'])
   t.push(['queue limit', num(queueLimit) + ' batches'])
   t.push(['heartbeat', opts.heartbeat > 0 ? 'every ' + fmtDuration(opts.heartbeat) : grey('off')])
@@ -229,6 +240,7 @@ const report = function (stats) {
     ['namespace', stats.skipped_namespace],
     ['redirects', stats.skipped_redirect],
     ['disambig', stats.skipped_disambig],
+    ['NSFW', stats.skipped_nsfw],
     ['empty', stats.skipped_empty],
   ]
   reasons.forEach(([label, n]) => {

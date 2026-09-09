@@ -4,10 +4,10 @@ const cpuCount = os.cpus().length
 export default {
   // which wikipedia namespaces to handle (null will do all)
   namespace: 0, //(default article namespace)
-  // whether to include pages that are redirects
-  redirects: false,
-  // whether to include disambiguiation pages
-  disambiguation: true,
+  // page filters
+  skip_redirect: true,
+  skip_disambig: false,
+  skip_nsfw: false,
   // how many worker threads parse the file.
   // one core is left for the main thread, which deserializes batches and runs your writer
   workers: Math.max(1, cpuCount - 1),

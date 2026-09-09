@@ -10,8 +10,9 @@
 - **[change]** - replaced sunday-driver with a pull-based reader. its pause did not hold for async consumers, and dropped pages
 - **[fix]** - workers split the file on exact `<page>` boundaries - no more mangled pages at the seams
 - **[new]** - `md` format includes `templates`
+- **[new]** - explicit `skip_redirect`, `skip_disambig`, and `skip_nsfw` filters; `skip_nsfw` also accepts a per-reason map
 - **[new]** - `dumpster-lib/fixture` export, for testing writers
-- **[fix]** - `redirects` and `disambiguation` options are now honoured
+- **[fix]** - redirect and disambiguation filters are now honoured
 - **[fix]** - a missing file or unknown format rejects `done` instead of exiting the process
 - **[fix]** - `end` waited for nobody, and `process.exit` could cut in-flight writes short
 - **[change]** - `chunkSize` option renamed to `batchPageCount`, `chunk` event renamed to `batch`
