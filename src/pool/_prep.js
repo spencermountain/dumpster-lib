@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import { validNamespace } from '../lib/namespace.js'
 
 const formats = ['text', 'sm', 'md', 'lg', 'xl', 'html', 'markdown', 'json']
 const renamedFilters = {
@@ -23,7 +24,7 @@ const validSkipNsfwOption = function (option) {
 
 // throw early on bad options. the pool turns this into an 'error' event and a rejected `done`
 const checkOptions = function (opts) {
-  const { file, format, skip_redirect, skip_disambig, skip_nsfw, skip_stub } = opts
+  const { file, format, namespace, skip_redirect, skip_disambig, skip_nsfw, skip_stub } = opts
   const renamed = Object.keys(renamedFilters).find((name) => Object.hasOwn(opts, name))
   if (renamed) {
     throw new Error(`'${renamed}' has been renamed to '${renamedFilters[renamed]}' with inverted boolean semantics`)
@@ -36,6 +37,9 @@ const checkOptions = function (opts) {
   }
   if (!formats.includes(format)) {
     throw new Error(`unknown format '${format}' - expected one of: ${formats.join(', ')}`)
+  }
+  if (!validNamespace(namespace)) {
+    throw new Error(`'namespace' must be an integer, boolean, null, or an object mapping namespace IDs to booleans`)
   }
   if (typeof skip_redirect !== 'boolean') {
     throw new Error(`'skip_redirect' must be true or false`)

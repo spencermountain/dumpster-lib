@@ -5,6 +5,7 @@ import wtfPluginHtml from 'wtf-plugin-html'
 import wtfPluginMarkdown from 'wtf-plugin-markdown'
 import wtfPluginI18n from 'wtf-plugin-i18n'
 import wtfPluginNsfw from 'wtf-plugin-nsfw'
+import wtfPluginDebug from 'wtf-plugin-debug'
 
 import sm from './output/sm.js'
 import md from './output/md.js'
@@ -15,6 +16,7 @@ wtf.plugin(wtfPluginClassify)
 wtf.plugin(wtfPluginHtml)
 wtf.plugin(wtfPluginMarkdown)
 wtf.plugin(wtfPluginNsfw)
+wtf.plugin(wtfPluginDebug)
 
 //spaces to underscores
 const encodeTitle = (title) => {

@@ -4,6 +4,7 @@ import pages from './01-reader.js'
 import parseXml from './02-xml.js'
 import parsePage from './03-parse.js'
 import wantThisPage from './04-filter.js'
+import { keepNamespace } from '../lib/namespace.js'
 
 // each worker reads one byte-range of the dump:
 //   read '<page>' blocks → wtf_wikipedia → post a batch every `batchPageCount` pages.
@@ -53,8 +54,8 @@ const eachPage = function (xml) {
   try {
     const meta = parseXml(xml)
     title = meta.title
-    // only process pages in a given namespace
-    if (namespace !== null && meta.namespace !== namespace) {
+    // apply the namespace inclusion rule before parsing the page
+    if (!keepNamespace(meta.namespace, namespace)) {
       status.skipped_namespace += 1
       return null
     }

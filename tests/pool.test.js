@@ -74,6 +74,34 @@ test('honours skip_disambig option', async () => {
   assert.equal(stats.skipped_disambig, fixture.expect.disambig)
 })
 
+test('accepts numeric, boolean, and boolean-map namespace rules', async () => {
+  const cases = [
+    {
+      namespace: 14,
+      written: fixture.expect.otherNs,
+      skipped: fixture.count - fixture.expect.otherNs
+    },
+    { namespace: true, written: fixture.count - fixture.expect.redirects, skipped: 0 },
+    { namespace: false, written: 0, skipped: fixture.count },
+    {
+      namespace: { 0: false, 14: true },
+      written: fixture.expect.otherNs,
+      skipped: fixture.count - fixture.expect.otherNs
+    }
+  ]
+  for (const expected of cases) {
+    const pool = dumpster({ ...base, workers: 1, namespace: expected.namespace })
+    pool.on('batch', (pages) => {
+      if (expected.written === fixture.expect.otherNs) {
+        assert.equal(pages.every((page) => page.ns === 14), true)
+      }
+    })
+    const stats = await pool.done
+    assert.equal(stats.written, expected.written)
+    assert.equal(stats.skipped_namespace, expected.skipped)
+  }
+})
+
 test('flags stubs and honours skip_stub option', async () => {
   const included = dumpster({ ...base, workers: 2 })
   let stubs = 0
@@ -193,6 +221,11 @@ test('an invalid NSFW reason map rejects done', async () => {
 test('an invalid skip_stub option rejects done', async () => {
   const pool = dumpster({ ...base, skip_stub: 'yes' })
   await assert.rejects(pool.done, /'skip_stub' must be true or false/)
+})
+
+test('an invalid namespace rule rejects done', async () => {
+  const pool = dumpster({ ...base, namespace: { 0: 'yes' } })
+  await assert.rejects(pool.done, /'namespace' must be an integer, boolean, null, or an object/)
 })
 
 test('renamed filter options fail instead of being silently ignored', async () => {

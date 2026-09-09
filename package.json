@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "shared library for parsing wikimedia dumps",
   "main": "./src/index.js",
+  "types": "./types/index.d.ts",
   "type": "module",
   "bin": {
     "dumpster": "./src/cli/bin.js"
@@ -37,6 +38,7 @@
     "html-entities": "2.6.0",
     "log-update": "^8.0.0",
     "wtf-plugin-classify": "2.1.0",
+    "wtf-plugin-debug": "^0.0.1",
     "wtf-plugin-html": "1.0.0",
     "wtf-plugin-i18n": "1.0.2",
     "wtf-plugin-markdown": "1.0.1",
@@ -46,8 +48,17 @@
   },
   "license": "MIT",
   "exports": {
-    ".": "./src/index.js",
-    "./cli": "./src/cli/index.js",
-    "./fixture": "./src/lib/fixture.js"
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./cli": {
+      "types": "./types/cli.d.ts",
+      "default": "./src/cli/index.js"
+    },
+    "./fixture": {
+      "types": "./types/fixture.d.ts",
+      "default": "./src/lib/fixture.js"
+    }
   }
 }

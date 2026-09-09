@@ -185,8 +185,14 @@ const nsfwLabel = function (skipOption) {
   return yellow('selective') + dim(' (skipping ' + skipped.join(', ') + ')')
 }
 const nsLabel = (ns) => {
-  if (ns === null || ns === undefined) return 'all'
+  if (ns === null || ns === true || ns === undefined) return 'all'
+  if (ns === false) return 'none'
   if (ns === 0) return '0  ' + dim('(articles)')
+  if (typeof ns === 'object') {
+    const included = Object.keys(ns).filter((key) => ns[key] === true)
+    if (included.length === 0) return 'none'
+    return included.map((key) => (key === '0' ? '0 ' + dim('(articles)') : key)).join(', ')
+  }
   return String(ns)
 }
 

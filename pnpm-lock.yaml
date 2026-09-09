@@ -26,6 +26,9 @@ importers:
       wtf-plugin-classify:
         specifier: 2.1.0
         version: 2.1.0(wtf_wikipedia@10.4.2)
+      wtf-plugin-debug:
+        specifier: ^0.0.1
+        version: 0.0.1(wtf_wikipedia@10.4.2)
       wtf-plugin-html:
         specifier: 1.0.0
         version: 1.0.0(wtf_wikipedia@10.4.2)
@@ -205,6 +208,11 @@ packages:
 
   wtf-plugin-classify@2.1.0:
     resolution: {integrity: sha512-lRiqitC+E7cFID4Oats3Z51P8KPncsuknXN752Mtz5v8+PM2tA7DzdFX2EEean4FczUtqQEQdE3IjgfSJx9MNg==}
+    peerDependencies:
+      wtf_wikipedia: '>=9.0.0'
+
+  wtf-plugin-debug@0.0.1:
+    resolution: {integrity: sha512-ljh1lqdAzbm8LjJ+GrnHniwTQL8524/K6OYN501GS8wyTYalz92wHOp/D5DsyXSuZTlZspFk6vUOu2rhyEjJ+w==}
     peerDependencies:
       wtf_wikipedia: '>=9.0.0'
 
@@ -389,6 +397,10 @@ snapshots:
       string-width: 8.2.2
 
   wtf-plugin-classify@2.1.0(wtf_wikipedia@10.4.2):
+    dependencies:
+      wtf_wikipedia: 10.4.2
+
+  wtf-plugin-debug@0.0.1(wtf_wikipedia@10.4.2):
     dependencies:
       wtf_wikipedia: 10.4.2
 

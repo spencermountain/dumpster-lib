@@ -3,6 +3,14 @@ import { formats } from '../pool/_prep.js'
 
 const fileExists = (v) => (v && fs.existsSync(v) ? undefined : `no file found at '${v}'`)
 
+const parseNamespace = function (value) {
+  const normalized = value.trim().toLowerCase()
+  if (normalized === 'all' || normalized === 'true') return true
+  if (normalized === 'none' || normalized === 'false') return false
+  if (normalized.startsWith('{')) return JSON.parse(value)
+  return Number(value)
+}
+
 // one declarative list of the pool's options, used to drive BOTH the commander flags
 // and the clack prompts - so a param is described in exactly one place.
 //
@@ -84,10 +92,10 @@ const baseParams = [
   { name: 'queueLimit', flags: '--queue-limit <n>', desc: 'batches held before pausing workers', type: 'number' },
   {
     name: 'namespace',
-    flags: '--namespace <n>',
-    desc: "namespace to keep, or 'all'",
-    type: 'number',
-    parse: (v) => (v === 'all' ? null : Number(v)),
+    flags: '--namespace <rule>',
+    desc: "namespace ID, 'all', 'none', or a JSON boolean map",
+    type: 'string',
+    parse: parseNamespace,
   },
   { name: 'heartbeat', flags: '--heartbeat <ms>', desc: 'ms between status frames (0 to disable)', type: 'number' },
 ]

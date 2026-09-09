@@ -11,6 +11,8 @@
 - **[fix]** - workers split the file on exact `<page>` boundaries - no more mangled pages at the seams
 - **[new]** - `md` format includes `templates`
 - **[new]** - explicit `skip_redirect`, `skip_disambig`, `skip_nsfw`, and `skip_stub` filters; `skip_nsfw` also accepts a per-reason map
+- **[new]** - `namespace` accepts an integer, boolean, or per-namespace boolean map (`null` remains an alias for all)
+- **[new]** - TypeScript declarations for the parser, pool, CLI runner, and fixture helper
 - **[new]** - `dumpster-lib/fixture` export, for testing writers
 - **[fix]** - redirect and disambiguation filters are now honoured
 - **[fix]** - a missing file or unknown format rejects `done` instead of exiting the process

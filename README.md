@@ -63,7 +63,7 @@ const stats = await pool.done
 - `batchPageCount` - pages per batch (default 100)
 - `workers` - parsing threads (default: cpu count − 1, leaving a core for the main thread and your writer)
 - `queueLimit` - batches the main thread holds before pausing the workers (default: one per worker)
-- `namespace` - which namespace to keep (default 0. `null` for all)
+- `namespace` - namespace inclusion rule (default 0): an integer keeps one namespace; `true` or `null` keeps all; `false` keeps none; an object such as `{ 0: true, 14: false }` keeps keys set to true and excludes false or omitted keys
 - `skip_redirect` - skip redirect pages (default true)
 - `skip_disambig` - skip disambiguation pages (default false)
 - `skip_nsfw` - skip pages flagged by `wtf-plugin-nsfw` (default false). set true to filter all flagged pages, or pass a reason map such as `{ Weapons: false, 'Drug-use': true }`. omitted reasons are not skipped.
@@ -85,6 +85,10 @@ const pool = dumpster({
 this keeps weapon-related pages and filters drug-related pages. omitted reasons are kept.
 
 the heartbeat prints each worker's page count, then `queue` (batches waiting for your writer), `parked` (workers paused waiting for room) and memory. if `parked` sits near the worker count, the writer is the bottleneck - try fewer workers, or bigger batches.
+
+### TypeScript
+
+the package includes declarations for `dumpster-lib`, `dumpster-lib/cli`, and `dumpster-lib/fixture`. page types are inferred from the literal `format` option, and the core types can be imported by name.
 
 MIT
 
