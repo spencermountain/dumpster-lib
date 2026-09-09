@@ -13,6 +13,7 @@
 - **[new]** - explicit `skip_redirect`, `skip_disambig`, `skip_nsfw`, and `skip_stub` filters; `skip_nsfw` also accepts a per-reason map
 - **[new]** - `namespace` accepts an integer, boolean, or per-namespace boolean map (`null` remains an alias for all)
 - **[new]** - TypeScript declarations for the parser, pool, CLI runner, and fixture helper
+- **[new]** - `silent` option and `--silent` CLI flag suppress library-generated setup, heartbeat, warnings, and final report output
 - **[new]** - `dumpster-lib/fixture` export, for testing writers
 - **[fix]** - redirect and disambiguation filters are now honoured
 - **[fix]** - a missing file or unknown format rejects `done` instead of exiting the process

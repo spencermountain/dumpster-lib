@@ -1,14 +1,25 @@
 import { test, after } from 'node:test'
 import assert from 'node:assert'
+import { execFile } from 'node:child_process'
 import { rmSync } from 'node:fs'
+import { promisify } from 'node:util'
+import { fileURLToPath } from 'node:url'
 import dumpster from '../src/index.js'
 import makeFixture from '../src/lib/fixture.js'
 
 const fixture = makeFixture(300)
+const execFileAsync = promisify(execFile)
+const silentRunner = fileURLToPath(new URL('./silent-run.js', import.meta.url))
 after(() => rmSync(fixture.dir, { recursive: true, force: true }))
 
-const base = { file: fixture.file, format: 'text', heartbeat: 0, lang: 'en' }
+const base = { file: fixture.file, format: 'text', silent: true, lang: 'en' }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+test('silent suppresses stdout and stderr for a complete run', async () => {
+  const { stdout, stderr } = await execFileAsync(process.execPath, [silentRunner, fixture.file])
+  assert.equal(stdout, '')
+  assert.equal(stderr, '')
+})
 
 test('every article arrives exactly once, across workers and partial batches', async () => {
   const pool = dumpster({ ...base, workers: 4, batchPageCount: 7 })
@@ -226,6 +237,11 @@ test('an invalid skip_stub option rejects done', async () => {
 test('an invalid namespace rule rejects done', async () => {
   const pool = dumpster({ ...base, namespace: { 0: 'yes' } })
   await assert.rejects(pool.done, /'namespace' must be an integer, boolean, null, or an object/)
+})
+
+test('an invalid silent option rejects done', async () => {
+  const pool = dumpster({ ...base, silent: 'yes' })
+  await assert.rejects(pool.done, /'silent' must be true or false/)
 })
 
 test('renamed filter options fail instead of being silently ignored', async () => {

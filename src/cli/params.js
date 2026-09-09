@@ -98,6 +98,7 @@ const baseParams = [
     parse: parseNamespace,
   },
   { name: 'heartbeat', flags: '--heartbeat <ms>', desc: 'ms between status frames (0 to disable)', type: 'number' },
+  { name: 'silent', flags: '--silent', desc: 'suppress all library status output', type: 'boolean' },
 ]
 
 // register each param as a commander option

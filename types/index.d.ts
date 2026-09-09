@@ -41,6 +41,8 @@ export interface DumpsterOptions<Format extends DumpsterFormat = DumpsterFormat>
   queueLimit?: number | null
   /** Milliseconds between status frames; zero disables them. @default 5000 */
   heartbeat?: number
+  /** Suppress library-generated setup, status, warning, and report output. @default false */
+  silent?: boolean
 }
 
 export interface DumpsterPageBase {

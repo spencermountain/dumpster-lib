@@ -17,6 +17,8 @@ export default {
   // how many batches the main thread will hold for a slow writer, before pausing the workers.
   // (null defaults to one per worker. peak memory is about (queueLimit + workers) batches)
   queueLimit: null,
+  // suppress setup, status, warnings, and the final report
+  silent: false,
   //interval to log status (0 to disable)
   heartbeat: 5000, //every 5 seconds
   // what format to output the pages in

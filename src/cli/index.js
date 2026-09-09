@@ -103,7 +103,9 @@ const run = async function (config = {}) {
   try {
     checkOptions(Object.assign({}, defaults, opts))
   } catch (err) {
-    log.error(err.message)
+    if (!opts.silent) {
+      log.error(err.message)
+    }
     process.exit(1)
   }
 
@@ -116,7 +118,9 @@ const run = async function (config = {}) {
     return
   } catch (err) {
     // the pool has already torn down; surface the reason and fail the process
-    log.error(err.message || String(err))
+    if (!opts.silent) {
+      log.error(err.message || String(err))
+    }
     process.exitCode = 1
   }
 }

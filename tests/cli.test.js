@@ -5,6 +5,7 @@ import { baseParams, applyParams, passedParams } from '../src/cli/params.js'
 
 const filterParams = baseParams.filter((param) => param.name.startsWith('skip_'))
 const namespaceParams = baseParams.filter((param) => param.name === 'namespace')
+const silentParams = baseParams.filter((param) => param.name === 'silent')
 
 const parseWith = function (params, args) {
   const program = new Command()
@@ -33,4 +34,8 @@ test('CLI parses namespace numbers, booleans, and maps', () => {
   assert.deepEqual(parseWith(namespaceParams, ['--namespace', '{"0":true,"14":false}']), {
     namespace: { 0: true, 14: false }
   })
+})
+
+test('CLI maps --silent to the library option', () => {
+  assert.deepEqual(parseWith(silentParams, ['--silent']), { silent: true })
 })
