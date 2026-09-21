@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { checkOptions } from './_prep.js'
 import partition from './_partition.js'
 import { calc } from './_summary.js'
-import * as dashboard from './_dashboard.js'
+import createDashboard from './_dashboard.js'
 
 const workerFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '../worker/index.js')
 
@@ -26,6 +26,7 @@ class Pool extends EventEmitter {
   constructor(opts) {
     super()
     this.opts = opts
+    this.dashboard = createDashboard()
     this.workers = []
     this.queue = [] // batches waiting for the writer
     this.parked = [] // paused workers we have not yet told to resume
@@ -48,6 +49,7 @@ class Pool extends EventEmitter {
 
   // kick off each worker, on a part of the file
   start() {
+    if (this.closing) return
     const { file, workers } = this.opts
     checkOptions(this.opts)
     const ranges = partition(file, workers)
@@ -56,7 +58,7 @@ class Pool extends EventEmitter {
     }
     this.fileSize = fs.statSync(file).size
     if (!this.opts.silent) {
-      dashboard.preRun({
+      this.dashboard.preRun({
         file,
         fileSize: this.fileSize,
         workers: ranges.length,
@@ -182,7 +184,7 @@ class Pool extends EventEmitter {
       this.beat() // one last frame, so every worker shows done / 100%
     }
     if (!this.opts.silent) {
-      dashboard.stop()
+      this.dashboard.stop()
     }
     const stats = this.summary()
     // 'end' listeners are awaited too - flush and close your db here
@@ -193,7 +195,7 @@ class Pool extends EventEmitter {
     }
     await this.stopWorkers()
     if (!this.opts.silent) {
-      dashboard.report(stats)
+      this.dashboard.report(stats)
     }
     return this.resolveDone(stats)
   }
@@ -205,7 +207,7 @@ class Pool extends EventEmitter {
     this.error = err
     clearInterval(this.heartbeat)
     if (!this.opts.silent) {
-      dashboard.stop()
+      this.dashboard.stop()
     }
     this.wake()
     await this.stopWorkers()
@@ -227,7 +229,7 @@ class Pool extends EventEmitter {
     hit.count += 1
     this.errorTally.set(message, hit)
     if (!this.opts.silent) {
-      dashboard.warn(this, `worker #${msg.index + 1} couldn't process '${msg.title}': ${message}`)
+      this.dashboard.warn(this, `worker #${msg.index + 1} couldn't process '${msg.title}': ${message}`)
     }
   }
 
@@ -248,7 +250,7 @@ class Pool extends EventEmitter {
   beat() {
     this.stats.maxRss = Math.max(this.stats.maxRss, process.memoryUsage().rss)
     if (!this.opts.silent) {
-      dashboard.beat(this)
+      this.dashboard.beat(this)
     }
   }
 }

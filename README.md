@@ -101,7 +101,29 @@ every dumpster tool shares one command-line interface. the lib's own default com
 npx dumpster ./swwiki-latest-pages-articles.xml --format sm
 ```
 
-the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--skip-redirect`, `--skip-disambig`, `--skip-nsfw`, `--skip-stub`, `--heartbeat`, `--silent`). each skip flag also has a `--no-skip-*` form. run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker table, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set); `--silent` suppresses that library-generated output.
+the flags mirror the options above (`--file`, `--format`, `--lang`, `--workers`, `--namespace`, `--batch-page-count`, `--queue-limit`, `--skip-redirect`, `--skip-disambig`, `--skip-nsfw`, `--skip-stub`, `--heartbeat`, `--silent`). each skip flag also has a `--no-skip-*` form. run it with no file - or with `-i` - and it walks you through a guided setup, prompting only for what it needs. run it with the required options and it starts right away. it prints the setup, a live-updating per-worker dashboard, and a final report (all of which degrade to plain text / ascii when piped or when `NO_COLOR` / `NO_UNICODE` is set); `--silent` suppresses that library-generated output.
+
+### Developing the terminal UI
+
+The CLI uses [Ink](https://github.com/vadimdemedes/ink) and [Ink UI](https://github.com/vadimdemedes/ink-ui) (`@inkjs/ui`). It stays in native JavaScript modules, with `React.createElement` (aliased to `h`) for declarative components, so there is no JSX compilation or build step. Ink 6 keeps compatibility with the declared Node 20 range.
+
+```sh
+pnpm install
+node src/cli/bin.js --interactive
+pnpm test
+```
+
+The UI is organized by responsibility:
+
+- `src/cli/params.js`: shared option definitions for flags and guided prompts.
+- `src/cli/command.js`: Commander argument parsing and help.
+- `src/cli/index.js`: runner, validation, writer attachment, and cancellation.
+- `src/cli/prompts.js`: Ink prompt lifecycle; `prompt-value.js`: coercion and validation.
+- `src/cli/components/`: setup wizard, parameter inputs, setup sheet, worker progress, dashboard, and results report.
+- `src/cli/ui/`: report data, formatting, progress snapshots, and the terminal theme.
+- `src/pool/_dashboard.js`: output adapter that connects the pool to those components.
+
+Use Enter to accept a prompt and arrow keys to choose an option. The four page filters share one multi-select: use Space to toggle which page types to skip, then Enter to continue. Current skip settings are preselected; clearing every selection disables these four filters. Plugin boolean prompts use Y/N. The current select value appears first so Enter preserves it. Escape or Ctrl+C cancels setup with exit code 130; Ctrl+C during a CLI run stops its workers. Guided setup requires a terminal; scripts should supply the required flags. Piped runs use append-only status lines and static Ink-rendered setup/results. `--heartbeat 0` disables progress updates, and `--silent` suppresses all library run output.
 
 ### CLI for a writer plugin
 

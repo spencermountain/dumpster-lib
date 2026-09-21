@@ -12,7 +12,7 @@ const parseNamespace = function (value) {
 }
 
 // one declarative list of the pool's options, used to drive BOTH the commander flags
-// and the clack prompts - so a param is described in exactly one place.
+// and the Ink prompts - so a param is described in exactly one place.
 //
 // each param:
 //   name     - the dumpster() option key
