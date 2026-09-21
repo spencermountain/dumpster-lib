@@ -8,22 +8,15 @@
   "bin": {
     "dumpster": "./src/cli/bin.js"
   },
-  "author": "Spencer Kelly <spencermountain@gmail.com> (http://spencermounta.in)",
+  "author": "Spencer Kelly <spencermountain@gmail.com> (https://spencermountain.dev)",
   "scripts": {
     "test": "node --test 'tests/*.test.js'",
     "watch": "node ./scratch.js",
     "lint": "eslint ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/spencermountain/dumpster-lib.git"
-  },
-  "bugs": {
-    "url": "https://github.com/spencermountain/dumpster-lib/issues"
-  },
-  "homepage": "https://github.com/spencermountain/dumpster-lib#readme",
+  "repository": "github:spencermountain/dumpster-lib",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20"
   },
   "prettier": {
     "trailingComma": "none",
