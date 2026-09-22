@@ -28,7 +28,7 @@
     "@inkjs/ui": "^2.0.0",
     "commander": "^15.0.0",
     "html-entities": "2.6.0",
-    "ink": "^6.8.0",
+    "ink": "^7.1.1",
     "react": "^19.2.0",
     "wtf-plugin-classify": "2.1.0",
     "wtf-plugin-debug": "^0.0.1",
