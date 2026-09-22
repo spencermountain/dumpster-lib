@@ -1,5 +1,4 @@
-import { test } from 'node:test'
-import assert from 'node:assert'
+import test from 'tape'
 import { Command } from 'commander'
 import { baseParams, applyParams, passedParams } from '../src/cli/params.js'
 
@@ -17,25 +16,28 @@ const parseWith = function (params, args) {
 
 const parse = (args) => parseWith(filterParams, args)
 
-test('CLI skip flags map to the snake-case library options', () => {
+test('CLI skip flags map to the snake-case library options', (t) => {
   const opts = parse(['--no-skip-redirect', '--skip-disambig', '--skip-nsfw', '--skip-stub'])
-  assert.deepEqual(opts, {
+  t.deepEqual(opts, {
     skip_redirect: false,
     skip_disambig: true,
     skip_nsfw: true,
     skip_stub: true
   })
+  t.end()
 })
 
-test('CLI parses namespace numbers, booleans, and maps', () => {
-  assert.deepEqual(parseWith(namespaceParams, ['--namespace', '14']), { namespace: 14 })
-  assert.deepEqual(parseWith(namespaceParams, ['--namespace', 'all']), { namespace: true })
-  assert.deepEqual(parseWith(namespaceParams, ['--namespace', 'none']), { namespace: false })
-  assert.deepEqual(parseWith(namespaceParams, ['--namespace', '{"0":true,"14":false}']), {
+test('CLI parses namespace numbers, booleans, and maps', (t) => {
+  t.deepEqual(parseWith(namespaceParams, ['--namespace', '14']), { namespace: 14 })
+  t.deepEqual(parseWith(namespaceParams, ['--namespace', 'all']), { namespace: true })
+  t.deepEqual(parseWith(namespaceParams, ['--namespace', 'none']), { namespace: false })
+  t.deepEqual(parseWith(namespaceParams, ['--namespace', '{"0":true,"14":false}']), {
     namespace: { 0: true, 14: false }
   })
+  t.end()
 })
 
-test('CLI maps --silent to the library option', () => {
-  assert.deepEqual(parseWith(silentParams, ['--silent']), { silent: true })
+test('CLI maps --silent to the library option', (t) => {
+  t.deepEqual(parseWith(silentParams, ['--silent']), { silent: true })
+  t.end()
 })

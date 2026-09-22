@@ -11,7 +11,7 @@
   "sideEffects": false,
   "author": "Spencer Kelly <spencermountain@gmail.com> (https://spencermountain.dev)",
   "scripts": {
-    "test": "node --test 'tests/*.test.js'",
+    "test": "node tests/index.js",
     "watch": "node ./scratch.js",
     "lint": "eslint ."
   },
@@ -54,5 +54,9 @@
       "types": "./types/fixture.d.ts",
       "default": "./src/lib/fixture.js"
     }
+  },
+  "devDependencies": {
+    "tap-dancer": "^0.4.0",
+    "tape": "^5.10.2"
   }
 }
