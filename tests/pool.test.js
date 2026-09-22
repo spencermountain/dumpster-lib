@@ -16,7 +16,9 @@ const base = { file: fixture.file, format: 'text', silent: true, lang: 'en' }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 test('silent suppresses stdout and stderr for a complete run', async () => {
-  const { stdout, stderr } = await execFileAsync(process.execPath, [silentRunner, fixture.file])
+  // Exercise silence with colors enabled, without Node's conflicting-env warning.
+  const env = { ...process.env, FORCE_COLOR: '1', NO_COLOR: undefined }
+  const { stdout, stderr } = await execFileAsync(process.execPath, [silentRunner, fixture.file], { env })
   assert.equal(stdout, '')
   assert.equal(stderr, '')
 })

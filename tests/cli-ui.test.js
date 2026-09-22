@@ -72,10 +72,12 @@ function terminal() {
   stdin.ref = () => {}
   stdin.unref = () => {}
   const stdout = new PassThrough()
+  stdout.isTTY = true
   stdout.columns = 80
   let output = ''
   stdout.on('data', (chunk) => { output += chunk.toString() })
-  return { stdin, stdout, stderr: stdout, output: () => output }
+  // Keep intermediate frames even when the test runner is running in CI.
+  return { stdin, stdout, stderr: stdout, interactive: true, output: () => stripVTControlCharacters(output) }
 }
 
 test('wizard keeps defaults and plugin choice types across text/select/boolean/number prompts', { timeout: 5000 }, async () => {
@@ -132,19 +134,19 @@ test('dashboard preserves worker states, counts, overall progress and queue stat
   const workers = [{ index: 0, rangeSize: 100 }, { index: 1, rangeSize: 100, finished: true }]
   const frame = progressSnapshot({ workers, status: { 0: { bytes: 50, processed: 10, written: 8, errors: 1 } }, parked: [workers[0]], queue: [[]], queueLimit: 2 })
   assert.equal(frame.progress, 75)
-  const output = renderToString(h(TerminalTheme, null, h(Dashboard, { frame })), { columns: 60 })
+  const output = stripVTControlCharacters(renderToString(h(TerminalTheme, null, h(Dashboard, { frame })), { columns: 60 }))
   for (const pattern of [/parked/, /done/, /processed 10/, /written 8/, /75%/, /queue 1\/2/, /errors 1/]) assert.match(output, pattern)
   // Terminal color sequences do not occupy visible columns.
-  assert.ok(stripVTControlCharacters(output).split('\n').every((line) => line.length <= 60))
+  assert.ok(output.split('\n').every((line) => line.length <= 60))
 })
 
 test('setup and report preserve filters, skip reasons, error examples and performance', () => {
-  const setup = renderToString(h(SetupSheet, { info: { file: fixture.file, fileSize: 1024, workers: 2, queueLimit: 2, opts: { ...defaults, skip_nsfw: { Weapons: true } } } }))
+  const setup = stripVTControlCharacters(renderToString(h(SetupSheet, { info: { file: fixture.file, fileSize: 1024, workers: 2, queueLimit: 2, opts: { ...defaults, skip_nsfw: { Weapons: true } } } })))
   assert.match(setup, /selective/)
   assert.match(setup, /Weapons/)
   assert.match(setup, /memory bound/)
   const stats = { processed: 10, written: 5, skipped: 3, skipped_namespace: 2, skipped_redirect: 1, errors: 2, errorTypes: [{ message: 'parse failed', count: 2, title: 'Example page' }], took: 1000, workers: 2, batches: 1, maxQueue: 2, parked: 1, bytes: 1024, maxRss: 1048576 }
-  const output = renderToString(h(ResultsReport, { stats }))
+  const output = stripVTControlCharacters(renderToString(h(ResultsReport, { stats })))
   for (const label of ['done, with errors', 'namespace', 'redirects', 'parse failed', 'Example page', 'throughput', 'backpressure', 'peak memory']) assert.ok(output.includes(label), label)
 })
 
