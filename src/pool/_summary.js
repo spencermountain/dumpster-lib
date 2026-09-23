@@ -1,6 +1,6 @@
 // calculate sums from each worker's status
 const calc = function (arr) {
-  let sums = {
+  const sums = {
     processed: 0,
     skipped: 0,
     written: 0,

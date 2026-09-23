@@ -33,7 +33,7 @@ const toOutputFormat = (doc, fmt) => {
   } else if (fmt === 'lg') {
     return doc.json()
   } else if (fmt === 'xl') {
-    let res = doc.json()
+    const res = doc.json()
     res.text = doc.text()
     return res
   } else if (fmt === 'html') {
@@ -49,11 +49,11 @@ const toOutputFormat = (doc, fmt) => {
 
 const parsePage = function (meta, fmt) {
   // parse the wikitext
-  let doc = wtf(meta.wiki, meta)
+  const doc = wtf(meta.wiki, meta)
   // actually process the page
-  let body = toOutputFormat(doc, fmt)
+  const body = toOutputFormat(doc, fmt)
   const nsfw = doc.nsfw()
-  let title = meta.title //|| doc.title()
+  const title = meta.title //|| doc.title()
   const result = {
     title,
     pageID: meta.pageID,

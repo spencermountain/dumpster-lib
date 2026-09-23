@@ -89,7 +89,7 @@ const eachPage = function (xml) {
 const run = async function () {
   let batch = []
   try {
-    for await (let xml of pages({ file, start, end })) {
+    for await (const xml of pages({ file, start, end })) {
       status.bytes += Buffer.byteLength(xml) // ~proportional to our byte-range; enough for a progress bar
       const page = eachPage(xml)
       if (page !== null) {

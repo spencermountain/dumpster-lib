@@ -29,7 +29,7 @@ test('a tiny file yields fewer ranges than workers asked', (t) => {
   try {
     const ranges = partition(small.file, 8)
     t.ok(ranges.length <= 3)
-    t.ok(ranges.length >= 1)
+    t.ok(ranges.length > 0)
   } finally {
     rmSync(small.dir, { recursive: true, force: true })
   }
